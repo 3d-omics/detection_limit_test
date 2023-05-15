@@ -2,10 +2,10 @@ rule reads_link_pe:
     """Make a link to the original file, with a prettier name than default"""
     input:
         forward_=get_forward,
-        reverse_=get_reverse,
+        reverse_=get_reverse
     output:
         forward_=temp(READS / "{sample}_1.fq.gz"),
-        reverse_=temp(READS / "{sample}_2.fq.gz"),
+        reverse_=temp(READS / "{sample}_2.fq.gz")
     log:
         READS / "{sample}.log",
     conda:

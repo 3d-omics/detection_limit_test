@@ -18,6 +18,7 @@ SAMPLES = samples["sample"].drop_duplicates().values.tolist()
 include: "rules/common.smk"
 include: "rules/folders.smk"
 include: "rules/reads.smk"
+include: "rules/fastqc.smk"
 include: "rules/fastp.smk"
 include: "rules/index_human.smk"
 include: "rules/map_human.smk"
@@ -28,6 +29,6 @@ include: "rules/map_human.smk"
 
 rule all:
     input:
-        rules.fastp.input,
-        rules.index_human.input,
-        rules.map_human.input
+        rules.reads_fastqc.input,
+        rules.fastp_all.input,
+        rules.map_human_all.input

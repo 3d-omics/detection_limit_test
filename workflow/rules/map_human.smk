@@ -43,8 +43,8 @@ rule map_human:
 rule map_human_all_samples:
     input:
         [
-            STAR / f"{sample}_host.bam"
-            for sample, library in SAMPLES
+            MAP_HUMAN / f"{sample}_host.bam"
+            for sample in SAMPLES
         ],
 
 

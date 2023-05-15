@@ -12,9 +12,9 @@ rule index_human:
         mem_gb=96,
         time='03:00:00'
     log:
-        INDEX_HUMAN / "{sample}.log",
+        "resources/index_human/{sample}.log",
     benchmark:
-        INDEX_HUMAN / "{sample}.bmk"
+        "resources/index_human/{sample}.bmk"
     shell:
         """
         # Index catted genomes

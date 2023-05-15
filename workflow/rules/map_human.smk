@@ -1,13 +1,13 @@
 rule map_human:
     input:
-        fwd=FASTP / "{sample}_1.fq.gz",
-        rev=FASTP / "{sample}_2.fq.gz",
+        fwd="resources/fastp/{sample}_1.fq.gz",
+        rev="resources/fastp/{sample}_2.fq.gz",
         genome=features["references"]["human_genome"] + ".rev.2.bt2l"
     output:
-        all=INDEX_HUMAN / "{sample}_all.bam",
-        host=INDEX_HUMAN / "{sample}_host.bam",
-        fwd=INDEX_HUMAN / "{sample}_1.fq.gz",
-        rev=INDEX_HUMAN / "{sample}_2.fq.gz",
+        all="resources/map_human/{sample}_all.bam",
+        host="resources/map_human/{sample}_host.bam",
+        fwd="resources/map_human/{sample}_1.fq.gz",
+        rev="resources/map_human/{sample}_2.fq.gz",
     conda:
         "../envs/map_human.yml"
     threads:
@@ -17,9 +17,9 @@ rule map_human:
         mem_gb=96,
         time='03:00:00'
     log:
-        INDEX_HUMAN / "{sample}.log",
+        "resources/map_human/{sample}.log",
     benchmark:
-        INDEX_HUMAN / "{sample}.bmk"
+        "resources/map_human/{sample}.bmk"
     shell:
         """
         # Map reads to catted reference using Bowtie2

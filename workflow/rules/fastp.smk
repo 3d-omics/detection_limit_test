@@ -1,17 +1,17 @@
 rule fastp_trim_one:
     """Run fastp on one library"""
     input:
-        fwd=READS / "{sample}_1.fq.gz",
-        rev=READS / "{sample}_2.fq.gz",
+        fwd="resources/reads/{sample}_1.fq.gz",
+        rev="resources/reads/{sample}_2.fq.gz",
     output:
-        fwd=temp(FASTP / "{sample}_1.fq.gz"),
-        rev=temp(FASTP / "{sample}_2.fq.gz"),
-        html=FASTP / "{sample}.html",
-        json=FASTP / "{sample}_fastp.json",
+        fwd=temp("resources/fastp/{sample}_1.fq.gz"),
+        rev=temp("resources/fastp/{sample}_2.fq.gz"),
+        html="resources/fastp/{sample}.html",
+        json="resources/fastp/{sample}_fastp.json",
     log:
-        FASTP / "{sample}.log",
+        "resources/fastp/{sample}.log",
     benchmark:
-        FASTP / "{sample}.bmk"
+        "resources/fastp/{sample}.bmk"
     params:
         adapter_fwd=params["fastp"]["adapter_fwd"],
         adapter_rev=params["fastp"]["adapter_rev"]

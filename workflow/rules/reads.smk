@@ -7,7 +7,7 @@ rule reads_link_pe:
         forward_=temp(READS / "{sample}_1.fq.gz"),
         reverse_=temp(READS / "{sample}_2.fq.gz")
     log:
-        READS / "{sample}.log",
+        READS / "{sample}.log"
     conda:
         "../envs/empty.yml"
     shell:

@@ -20,11 +20,8 @@ include: "rules/folders.smk"
 include: "rules/reads.smk"
 include: "rules/fastqc.smk"
 include: "rules/fastp.smk"
-include: "rules/index_human.smk"
 include: "rules/map_human.smk"
-#include: "rules/index_chicken.smk"
 #include: "rules/map_chicken.smk"
-#include: "rules/index_mag_catalogue.smk"
 #include: "rules/map_mag_catalogue.smk"
 
 rule all:

@@ -1,4 +1,4 @@
-rule reads_link_one:
+rule reads_link:
     """Make a link to the original file, with a prettier name than default"""
     input:
         forward_=get_forward,
@@ -43,6 +43,3 @@ rule reads:
     input:
         rules.reads_link_all.input,
         rules.reads_fastqc_all.input
-
-localrules:
-    reads_link_one

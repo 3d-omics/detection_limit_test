@@ -26,6 +26,6 @@ include: "rules/map_human.smk"
 
 rule all:
     input:
-        rules.reads_fastqc.input,
+        rules.reads_fastqc_all.input,
         rules.fastp_all.input,
         rules.map_human_all.input

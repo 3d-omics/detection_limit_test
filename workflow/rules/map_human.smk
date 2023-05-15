@@ -39,3 +39,15 @@ rule map_human:
         samtools view -b -F12 -@ {threads} {output.all} \
         | samtools sort -@ {threads} -o {output.host} -
         """
+
+rule map_human_all:
+    input:
+        [
+            STAR / f"{sample}_host.bam"
+            for sample, library in SAMPLES
+        ],
+
+
+rule star_all:
+    input:
+        rules.map_human_all.input

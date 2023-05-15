@@ -38,3 +38,17 @@ rule fastp:
             --adapter_sequence_r2 {params.adapter_rev} \
             --thread {threads} \
         """
+
+rule fastp_all_samples:
+    """Collect fastp files"""
+    input:
+        [
+            FASTP / f"{sample}_{end}.fq.gz"
+            for sample in SAMPLES
+            for end in "1 2".split()
+        ],
+
+
+rule fastp_all:
+    input:
+        rules.fastp_all_samples.input

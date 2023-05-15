@@ -11,11 +11,24 @@ params = yaml.load(open("config/params.yml", "r"), Loader=yaml.SafeLoader)
 features = yaml.load(open("config/features.yml", "r"), Loader=yaml.SafeLoader)
 samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
 
+# Generate useful variables
+SAMPLES = samples["sample"].drop_duplicates().values.tolist()
+MAX_THREADS = params["max_threads"]
+
 # Import subworkflows
+include: "rules/common.smk"
+include: "rules/folders.smk"
+include: "rules/reads.smk"
 include: "rules/fastp.smk"
 include: "rules/index_human.smk"
 include: "rules/map_human.smk"
-include: "rules/index_chicken.smk"
-include: "rules/map_chicken.smk"
-include: "rules/index_mag_catalogue.smk"
-include: "rules/map_mag_catalogue.smk"
+#include: "rules/index_chicken.smk"
+#include: "rules/map_chicken.smk"
+#include: "rules/index_mag_catalogue.smk"
+#include: "rules/map_mag_catalogue.smk"
+
+rule all:
+    input:
+        rules.fastp.input,
+        rules.index_human.input,
+        rules.map_human.input

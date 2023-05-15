@@ -1,17 +1,17 @@
-rule fastp_trim_one:
+rule fastp:
     """Run fastp on one library"""
     input:
-        fwd="resources/reads/{sample}_1.fq.gz",
-        rev="resources/reads/{sample}_2.fq.gz",
+        read1=READS / "{sample}_1.fq.gz",
+        read2=READS / "{sample}_2.fq.gz"
     output:
-        fwd=temp("resources/fastp/{sample}_1.fq.gz"),
-        rev=temp("resources/fastp/{sample}_2.fq.gz"),
-        html="resources/fastp/{sample}.html",
-        json="resources/fastp/{sample}_fastp.json",
+        fwd=temp(FASTP / "{sample}_1.fq.gz"),
+        rev=temp(FASTP / "{sample}_2.fq.gz"),
+        html=FASTP / "{sample}.html",
+        json=FASTP / "{sample}_fastp.json"
     log:
-        "resources/fastp/{sample}.log",
+        FASTP / "{sample}.log"
     benchmark:
-        "resources/fastp/{sample}.bmk"
+        FASTP / "{sample}.bmk"
     params:
         adapter_fwd=params["fastp"]["adapter_fwd"],
         adapter_rev=params["fastp"]["adapter_rev"]
@@ -26,10 +26,10 @@ rule fastp_trim_one:
     shell:
         """
         fastp \
-            --in1 {input.fwd} \
-            --in2 {input.rev} \
-            --out1 {output.fwd} \
-            --out2 {output.rev} \
+            --in1 {input.read1} \
+            --in2 {input.read2} \
+            --out1 {output.read1} \
+            --out2 {output.read2} \
             --html {output.html} \
             --json {output.json} \
             --compression 1 \

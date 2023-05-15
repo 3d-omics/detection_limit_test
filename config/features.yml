@@ -1,0 +1,4 @@
+references:
+  human_genome: resources/reference/GCF_000001405.40_GRCh38.p14_genomic.fna.gz
+  chicken_genome: resources/reference/GCF_016699485.2_bGalGal1.mat.broiler.GRCg7b_genomic.fna.gz
+  metagenome: resources/reference/mag_catalogue.fna.gz

@@ -1,4 +1,21 @@
-# Main entrypoint of the workflow. 
-# Please follow the best practices: 
+# Main entrypoint of the workflow.
+# Please follow the best practices:
 # https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html,
-# in particular regarding the standardized folder structure mentioned there. 
+# in particular regarding the standardized folder structure mentioned there.
+
+import pandas as pd
+import yaml
+
+# Import configuration files
+params = yaml.load(open("config/params.yml", "r"), Loader=yaml.SafeLoader)
+features = yaml.load(open("config/features.yml", "r"), Loader=yaml.SafeLoader)
+samples = pd.read_table("config/samples.tsv", comment="#", dtype="str")
+
+# Import subworkflows
+include: "rules/fastp.smk"
+include: "rules/index_human.smk"
+include: "rules/map_human.smk"
+include: "rules/index_chicken.smk"
+include: "rules/map_chicken.smk"
+include: "rules/index_mag_catalogue.smk"
+include: "rules/map_mag_catalogue.smk"

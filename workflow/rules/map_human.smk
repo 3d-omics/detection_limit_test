@@ -40,7 +40,7 @@ rule map_human:
         | samtools sort -@ {threads} -o {output.host} -
         """
 
-rule map_human_all:
+rule map_human_all_samples:
     input:
         [
             STAR / f"{sample}_host.bam"
@@ -48,6 +48,6 @@ rule map_human_all:
         ],
 
 
-rule star_all:
+rule map_human_all:
     input:
-        rules.map_human_all.input
+        rules.map_human_all_samples.input

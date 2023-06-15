@@ -1,3 +1,3 @@
 sample	forward	reverse
-D056c	/projects/mjolnir1/people/jpl786/detection_limit_test_data/resources/reads/D056cJa1_EKDL220017891-1A_HKJMJDSX5_L2_1.fq.gz	/projects/mjolnir1/people/jpl786/detection_limit_test_data/resources/reads/D056cJa1_EKDL220017891-1A_HKJMJDSX5_L2_2.fq.gz
-D018a	/projects/mjolnir1/people/jpl786/detection_limit_test_data/resources/reads/D018aJa1_EKDL220017891-1A_HKJMJDSX5_L2_1.fq.gz	/projects/mjolnir1/people/jpl786/detection_limit_test_data/resources/reads/D018aJa1_EKDL220017891-1A_HKJMJDSX5_L2_2.fq.gz
+sample1	resources/reads/sample1_1.fq.gz	resources/reads/sample1_2.fq.gz
+sample2	resources/reads/sample2_1.fq.gz	resources/reads/sample2_2.fq.gz

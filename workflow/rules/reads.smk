@@ -2,12 +2,12 @@ rule reads_link:
     """Make a link to the original file, with a prettier name than default"""
     input:
         forward_=get_forward,
-        reverse_=get_reverse
+        reverse_=get_reverse,
     output:
         forward_=temp(READS / "{sample}_1.fq.gz"),
-        reverse_=temp(READS / "{sample}_2.fq.gz")
+        reverse_=temp(READS / "{sample}_2.fq.gz"),
     log:
-        READS / "{sample}.log"
+        READS / "{sample}.log",
     conda:
         "../envs/empty.yml"
     shell:
@@ -20,11 +20,7 @@ rule reads_link:
 rule reads_link_all:
     """Link all reads in the samples.tsv"""
     input:
-        [
-            READS / f"{sample}_{end}.fq.gz"
-            for sample in SAMPLES
-            for end in ["1", "2"]
-        ],
+        [READS / f"{sample}_{end}.fq.gz" for sample in SAMPLES for end in ["1", "2"]],
 
 
 rule reads_fastqc_all:
@@ -42,4 +38,4 @@ rule reads:
     """Link all reads and run fastqc on them"""
     input:
         rules.reads_link_all.input,
-        rules.reads_fastqc_all.input
+        rules.reads_fastqc_all.input,

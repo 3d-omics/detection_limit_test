@@ -1,18 +1,17 @@
 rule index_human:
     input:
-        genome=features["references"]["human_genome"]
+        genome=features["references"]["human_genome"],
     output:
-        index=features["references"]["human_genome"] + ".rev.2.bt2l"
+        index=features["references"]["human_genome"] + ".rev.2.bt2l",
     conda:
         "../envs/index_human.yml"
-    threads:
-        16
+    threads: 16
     resources:
         load=1,
         mem_gb=96,
-        time='03:00:00'
+        time="03:00:00",
     log:
-        "resources/references/human_genome.log"
+        "resources/references/human_genome.log",
     benchmark:
         "resources/references/human_genome.bmk"
     shell:
@@ -25,11 +24,12 @@ rule index_human:
         &> {log}
         """
 
+
 rule map_human:
     input:
         fwd=FASTP / "{sample}_1.fq.gz",
         rev=FASTP / "{sample}_2.fq.gz",
-        genome=features["references"]["human_genome"] + ".rev.2.bt2l"
+        genome=features["references"]["human_genome"] + ".rev.2.bt2l",
     output:
         all=MAP_HUMAN / "{sample}_all.bam",
         host=MAP_HUMAN / "{sample}_host.bam",
@@ -37,12 +37,11 @@ rule map_human:
         rev=MAP_HUMAN / "{sample}_2.fq.gz",
     conda:
         "../envs/map_human.yml"
-    threads:
-        16
+    threads: 16
     resources:
         load=1,
         mem_gb=96,
-        time='03:00:00'
+        time="03:00:00",
     log:
         MAP_HUMAN / "{sample}.log",
     benchmark:
@@ -67,14 +66,12 @@ rule map_human:
         | samtools sort -@ {threads} -o {output.host} -
         """
 
+
 rule map_human_all_samples:
     input:
-        [
-            MAP_HUMAN / f"{sample}_host.bam"
-            for sample in SAMPLES
-        ],
+        [MAP_HUMAN / f"{sample}_host.bam" for sample in SAMPLES],
 
 
 rule map_human_all:
     input:
-        rules.map_human_all_samples.input
+        rules.map_human_all_samples.input,

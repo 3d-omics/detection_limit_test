@@ -3,5 +3,7 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - gzip
+  - gzip=1.12
   - nonpareil=3.4.1
+  - singlem=0.13.2
+  - bird_tool_utils_python

@@ -44,15 +44,41 @@ rule diversity_nonpareil_all:
         ],
 
 
+rule diversity_singlem_one:
+    """
+    Note: SingleM asks in the documentation for the raw reads. Here we are
+    passing it the non-host and trimmed ones.
+    """
+    input:
+        forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
+        reverse_=BOWTIE2 / "{sample}.{library}.nonchicken_2.fq.gz",
+    output:
+        otu_table=DIVERSITY / "{sample}.{library}.otu_table.tsv",
+    log:
+        DIVERSITY / "{sample}.{library}.singlem.log",
+    conda:
+        "../envs/diversity.yml"
+    threads: 24
+    shell:
+        """
+        singlem pipe \
+            --forward {input.forward_} \
+            --reverse {input.reverse_} \
+            --otu_table {output.otu_table} \
+            --threads {threads} \
+        2> {log} 1>&2
+        """
+
+
+rule diversity_singlem_all:
+    input:
+        [
+            DIVERSITY / f"{sample}.{library}.otu_table.tsv"
+            for sample, library in SAMPLE_LIB
+        ],
+
+
 rule diversity:
     input:
         rules.diversity_nonpareil_all.input,
-
-
-# nonpareil \
-#     -s sample1.lib1.nonchicken_1.fq \
-#     -T kmer \
-#     -b sample1.lib1 \
-#     -f fastq \
-#     -t 8 \
-#     -X 100
+        rules.diversity_singlem_all.input,

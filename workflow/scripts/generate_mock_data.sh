@@ -28,6 +28,8 @@ mkdir --parents resources/reads/
 wgsim \
     -N 1000 \
     -S 1 \
+    -1 150 \
+    -2 150 \
     resources/reference/human_22_sub.fa.gz \
     >(gzip -9 > resources/reads/human1_1.fq.gz) \
     >(gzip -9 > resources/reads/human1_2.fq.gz) \
@@ -36,6 +38,8 @@ wgsim \
 wgsim \
     -N 1000 \
     -S 2 \
+    -1 150 \
+    -2 150 \
     resources/reference/human_22_sub.fa.gz \
     >(gzip -9 > resources/reads/human2_1.fq.gz) \
     >(gzip -9 > resources/reads/human2_2.fq.gz) \
@@ -44,6 +48,8 @@ wgsim \
 wgsim \
     -N 1000 \
     -S 1 \
+    -1 150 \
+    -2 150 \
     resources/reference/chicken_39_sub.fa.gz \
     >(gzip -9 > resources/reads/chicken1_1.fq.gz) \
     >(gzip -9 > resources/reads/chicken1_2.fq.gz) \
@@ -52,6 +58,8 @@ wgsim \
 wgsim \
     -N 1000 \
     -S 2 \
+    -1 150 \
+    -2 150 \
     resources/reference/chicken_39_sub.fa.gz \
     >(gzip -9 > resources/reads/chicken2_1.fq.gz) \
     >(gzip -9 > resources/reads/chicken2_2.fq.gz) \
@@ -63,7 +71,9 @@ samtools faidx resources/reference/mags_sub.fa.gz
 wgsim \
     -N 100000 \
     -S 1 \
-    resources/reference/mags_sub.fa.gz \
+    -1 150 \
+    -2 150 \
+    resources/reference/mags.fa.gz \
     >(pigz -9 > resources/reads/mags1_1.fq.gz) \
     >(pigz -9 > resources/reads/mags1_2.fq.gz) \
 > resources/reads/mags1.log 2>&1
@@ -71,7 +81,9 @@ wgsim \
 wgsim \
     -N 100000 \
     -S 2 \
-    resources/reference/mags_sub.fa.gz \
+    -1 150 \
+    -2 150 \
+    resources/reference/mags.fa.gz \
     >(pigz -9 > resources/reads/mags2_1.fq.gz) \
     >(pigz -9 > resources/reads/mags2_2.fq.gz) \
 > resources/reads/mags2.log 2>&1

@@ -26,10 +26,12 @@ include: "rules/fastp_functions.smk"
 include: "rules/fastp.smk"
 include: "rules/bowtie2_functions.smk"
 include: "rules/bowtie2.smk"
+include: "rules/diversity.smk"
 
 
 rule all:
     input:
-        rules.reads.input,
-        rules.fastp.input,
-        rules.bowtie2.input,
+        # rules.reads.input,
+        # rules.fastp.input,
+        # rules.bowtie2.input,
+        rules.diversity.input,

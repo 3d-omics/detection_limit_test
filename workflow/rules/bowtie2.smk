@@ -97,10 +97,45 @@ rule bowtie2_map_human_one:
         """
 
 
-rule bowtie2_map_all:
-    """Collect the results of `bowtie2_map_one` for all libraries"""
+rule bowtie2_map_human_all:
     input:
         [BOWTIE2 / f"{sample}.{library}.human.cram" for sample, library in SAMPLE_LIB],
+
+
+rule bowtie2_extract_nonhuman_one:
+    input:
+        cram=BOWTIE2 / "{sample}.{library}.human.cram",
+    output:
+        forward_=BOWTIE2 / "{sample}.{library}.nonhuman_1.fq.gz",
+        reverse_=BOWTIE2 / "{sample}.{library}.nonhuman_2.fq.gz",
+    log:
+        BOWTIE2 / "{sample}.{library}.nonhuman.log",
+    conda:
+        "../envs/bowtie2.yml"
+    shell:
+        """
+        samtools view \
+            -u \
+            -f 4 \
+            {input.cram} \
+        | samtools fastq \
+            -1 {output.forward_} \
+            -2 {output.reverse_} \
+            -0 /dev/null \
+            -s /dev/null \
+            -n \
+            -c 1 \
+        2> {log} 1>&2
+        """
+
+
+rule bowtie2_extract_nonhuman_all:
+    input:
+        [
+            BOWTIE2 / f"{sample}.{library}.nonhuman_{end}.fq.gz"
+            for sample, library in SAMPLE_LIB
+            for end in ["1", "2"]
+        ],
 
 
 # rule bowtie2_report_all:
@@ -121,4 +156,4 @@ rule bowtie2:
     """Run bowtie2 on all libraries and generate reports"""
     input:
         # rules.bowtie2_report_all.input,
-        rules.bowtie2_map_all.input,
+        rules.bowtie2_extract_nonhuman_all.input,

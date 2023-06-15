@@ -1,50 +1,80 @@
-rule fastp:
+rule fastp_trim_one:
     """Run fastp on one library"""
     input:
-        read1=READS / "{sample}_1.fq.gz",
-        read2=READS / "{sample}_2.fq.gz",
+        forward_=READS / "{sample}.{library}_1.fq.gz",
+        reverse_=READS / "{sample}.{library}_2.fq.gz",
     output:
-        fwd=temp(FASTP / "{sample}_1.fq.gz"),
-        rev=temp(FASTP / "{sample}_2.fq.gz"),
-        html=FASTP / "{sample}.html",
-        json=FASTP / "{sample}_fastp.json",
+        forward_=temp(FASTP / "{sample}.{library}_1.fq.gz"),
+        reverse_=temp(FASTP / "{sample}.{library}_2.fq.gz"),
+        unpaired1=temp(FASTP / "{sample}.{library}_u1.fq.gz"),
+        unpaired2=temp(FASTP / "{sample}.{library}_u2.fq.gz"),
+        html=FASTP / "{sample}.{library}.html",
+        json=FASTP / "{sample}.{library}_fastp.json",
     log:
-        FASTP / "{sample}.log",
+        FASTP / "{sample}.{library}.log",
     benchmark:
-        FASTP / "{sample}.bmk"
+        FASTP / "{sample}.{library}.bmk"
     params:
-        adapter_fwd=params["fastp"]["adapter_fwd"],
-        adapter_rev=params["fastp"]["adapter_rev"],
-    threads: 8
+        adapter_forward=get_forward_adapter,
+        adapter_reverse=get_reverse_adapter,
+        extra=params["fastp"]["extra"],
+    threads: 24
     resources:
-        load=1,
-        mem_gb=10,
-        time="01:00:00",
+        mem_mb=1024,
+        runtime=240,
     conda:
         "../envs/fastp.yml"
     shell:
         """
         fastp \
-            --in1 {input.read1} \
-            --in2 {input.read2} \
-            --out1 {output.read1} \
-            --out2 {output.read2} \
+            --in1 {input.forward_} \
+            --in2 {input.reverse_} \
+            --out1 {output.forward_} \
+            --out2 {output.reverse_} \
+            --unpaired1 {output.unpaired1} \
+            --unpaired2 {output.unpaired2} \
             --html {output.html} \
             --json {output.json} \
             --compression 1 \
             --verbose \
-            --adapter_sequence {params.adapter_fwd} \
-            --adapter_sequence_r2 {params.adapter_rev} \
+            --adapter_sequence {params.adapter_forward} \
+            --adapter_sequence_r2 {params.adapter_reverse} \
             --thread {threads} \
+            {params.extra} \
+        2> {log} 1>&2
         """
 
 
-rule fastp_all_samples:
-    """Collect fastp files"""
+rule fastp_trim_all:
+    """Run fastp over all libraries"""
     input:
-        [FASTP / f"{sample}_{end}.fq.gz" for sample in SAMPLES for end in "1 2".split()],
+        [
+            FASTP / f"{sample}.{library}_{end}.fq.gz"
+            for sample, library in SAMPLE_LIB
+            for end in "1 2 u1 u2".split(" ")
+        ],
 
 
-rule fastp_all:
+# rule fastp_fastqc_all:
+#     """Run fastqc over all libraries"""
+#     input:
+#         [
+#             FASTP / f"{sample}.{library}_{end}_fastqc.{extension}"
+#             for sample, library in SAMPLE_LIB
+#             for end in ["1", "2"]
+#             for extension in ["html", "zip"]
+#         ],
+
+
+# rule fastp_report_all:
+#     """Collect fastp and fastqc reports"""
+#     input:
+#         [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIB],
+#         rules.fastp_fastqc_all.input,
+
+
+rule fastp:
+    """Run fastp and collect reports"""
     input:
-        rules.fastp_all_samples.input,
+        rules.fastp_trim_all.input,
+        # rules.fastp_report_all.input,

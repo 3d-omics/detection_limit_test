@@ -4,10 +4,10 @@ rule reads_link:
         forward_=get_forward,
         reverse_=get_reverse,
     output:
-        forward_=temp(READS / "{sample}_1.fq.gz"),
-        reverse_=temp(READS / "{sample}_2.fq.gz"),
+        forward_=temp(READS / "{sample}.{library}_1.fq.gz"),
+        reverse_=temp(READS / "{sample}.{library}_2.fq.gz"),
     log:
-        READS / "{sample}.log",
+        READS / "{sample}.{library}.log",
     conda:
         "../envs/empty.yml"
     shell:
@@ -20,15 +20,19 @@ rule reads_link:
 rule reads_link_all:
     """Link all reads in the samples.tsv"""
     input:
-        [READS / f"{sample}_{end}.fq.gz" for sample in SAMPLES for end in ["1", "2"]],
+        [
+            READS / f"{sample}.{library}_{end}.fq.gz"
+            for sample, library in SAMPLE_LIB
+            for end in ["1", "2"]
+        ],
 
 
 rule reads_fastqc_all:
     """Run fastqc on all raw reads"""
     input:
         [
-            READS / f"{sample}_{end}_fastqc.{extension}"
-            for sample in SAMPLES
+            READS / f"{sample}.{library}_{end}_fastqc.{extension}"
+            for sample, library in SAMPLE_LIB
             for end in ["1", "2"]
             for extension in ["html", "zip"]
         ],
@@ -38,4 +42,4 @@ rule reads:
     """Link all reads and run fastqc on them"""
     input:
         rules.reads_link_all.input,
-        rules.reads_fastqc_all.input,
+        # rules.reads_fastqc_all.input,

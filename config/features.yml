@@ -1,4 +1,4 @@
-references:
+reference:
   human: resources/reference/human_22_sub.fa.gz
   chicken: resources/reference/chicken_39_sub.fa.gz
-  mags: resources/reference/mags_sub.fa
+  mags: resources/reference/mags_sub.fa.gz

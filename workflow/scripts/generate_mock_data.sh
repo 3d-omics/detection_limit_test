@@ -64,16 +64,16 @@ wgsim \
     -N 100000 \
     -S 1 \
     resources/reference/mags_sub.fa.gz \
-    >(gzip -9 > resources/reads/mags1_1.fq.gz) \
-    >(gzip -9 > resources/reads/mags1_2.fq.gz) \
+    >(pigz -9 > resources/reads/mags1_1.fq.gz) \
+    >(pigz -9 > resources/reads/mags1_2.fq.gz) \
 > resources/reads/mags1.log 2>&1
 
 wgsim \
     -N 100000 \
     -S 2 \
     resources/reference/mags_sub.fa.gz \
-    >(gzip -9 > resources/reads/mags2_1.fq.gz) \
-    >(gzip -9 > resources/reads/mags2_2.fq.gz) \
+    >(pigz -9 > resources/reads/mags2_1.fq.gz) \
+    >(pigz -9 > resources/reads/mags2_2.fq.gz) \
 > resources/reads/mags2.log 2>&1
 
 
@@ -82,22 +82,22 @@ gzip -dc \
     resources/reads/human1_1.fq.gz \
     resources/reads/chicken1_1.fq.gz \
     resources/reads/mags1_1.fq.gz \
-| bgzip -l 9 > resources/reads/sample1_1.fq.gz
+| bgzip -@ 8 -l 9 > resources/reads/sample1_1.fq.gz
 
 gzip -dc \
     resources/reads/human1_2.fq.gz \
     resources/reads/chicken1_2.fq.gz \
     resources/reads/mags1_2.fq.gz \
-| bgzip -l 9 > resources/reads/sample1_2.fq.gz
+| bgzip -@ 8 -l 9 > resources/reads/sample1_2.fq.gz
 
 gzip -dc \
     resources/reads/human2_1.fq.gz \
     resources/reads/chicken2_1.fq.gz \
     resources/reads/mags2_1.fq.gz \
-| bgzip -l 9 > resources/reads/sample2_1.fq.gz
+| bgzip -@ 8 -l 9 > resources/reads/sample2_1.fq.gz
 
 gzip -dc \
     resources/reads/human2_2.fq.gz \
     resources/reads/chicken2_2.fq.gz \
     resources/reads/mags2_2.fq.gz \
-| bgzip -l 9 > resources/reads/sample2_2.fq.gz
+| bgzip -@ 8 -l 9 > resources/reads/sample2_2.fq.gz

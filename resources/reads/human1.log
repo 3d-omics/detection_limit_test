@@ -1,0 +1,13 @@
+[wgsim] seed = 1
+[wgsim_core] calculating the total length of the reference sequence...
+[wgsim_core] 1 sequences, total length: 10001
+22	736	G	C	-
+22	1522	T	Y	+
+22	2098	C	S	+
+22	2444	T	C	-
+22	3059	A	T	-
+22	4630	T	K	+
+22	5204	C	M	+
+22	6834	T	K	+
+22	7953	C	S	+
+22	9092	G	K	+

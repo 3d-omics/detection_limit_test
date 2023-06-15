@@ -61,7 +61,7 @@ wgsim \
 samtools faidx resources/reference/mags_sub.fa.gz
 
 wgsim \
-    -N 1000 \
+    -N 100000 \
     -S 1 \
     resources/reference/mags_sub.fa.gz \
     >(gzip -9 > resources/reads/mags1_1.fq.gz) \
@@ -69,7 +69,7 @@ wgsim \
 > resources/reads/mags1.log 2>&1
 
 wgsim \
-    -N 1000 \
+    -N 100000 \
     -S 2 \
     resources/reference/mags_sub.fa.gz \
     >(gzip -9 > resources/reads/mags2_1.fq.gz) \

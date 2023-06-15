@@ -5,3 +5,10 @@ bowtie2:
   extra: ""
   samtools:
     mem_per_thread: 1G
+
+coverm:
+  genome:
+    methods: "relative_abundance"
+    min_covered_fraction: 0.0
+  contig:
+    methods: "count"

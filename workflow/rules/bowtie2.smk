@@ -120,5 +120,5 @@ rule bowtie2_map_all:
 rule bowtie2:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        rules.bowtie2_map_all.input,
         # rules.bowtie2_report_all.input,
+        rules.bowtie2_map_all.input,

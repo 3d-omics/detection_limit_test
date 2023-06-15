@@ -12,8 +12,6 @@ rule fastp_trim_one:
         json=FASTP / "{sample}.{library}_fastp.json",
     log:
         FASTP / "{sample}.{library}.log",
-    benchmark:
-        FASTP / "{sample}.{library}.bmk"
     params:
         adapter_forward=get_forward_adapter,
         adapter_reverse=get_reverse_adapter,
@@ -29,10 +27,10 @@ rule fastp_trim_one:
         fastp \
             --in1 {input.forward_} \
             --in2 {input.reverse_} \
-            --out1 {output.forward_} \
-            --out2 {output.reverse_} \
-            --unpaired1 {output.unpaired1} \
-            --unpaired2 {output.unpaired2} \
+            --out1 >(bgzip -l 1 -@ {threads} > {output.forward_}) \
+            --out2 >(bgzip -l 1 -@ {threads} > {output.reverse_}) \
+            --unpaired1 >(bgzip -l 1 -@ {threads} > {output.unpaired1}) \
+            --unpaired2 >(bgzip -l 1 -@ {threads} > {output.unpaired2}) \
             --html {output.html} \
             --json {output.json} \
             --compression 1 \
@@ -71,6 +69,20 @@ rule fastp_trim_all:
 #     input:
 #         [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIB],
 #         rules.fastp_fastqc_all.input,
+
+
+rule fastp_index_one:
+    input:
+        FASTP / "{sample}.{library}_{end}.fq.gz",
+    output:
+        fai=FASTP / "{sample}.{library}_{end}.fq.gz.fai",
+        gzi=FASTP / "{sample}.{library}_{end}.fq.gz.gzi",
+    log:
+        FASTP / "{sample}.{library}_{end}.index.log",
+    conda:
+        "../envs/fastp.yml"
+    shell:
+        "samtools fqidx {input} 2> {log} 1>&2"
 
 
 rule fastp:

@@ -5,3 +5,4 @@ channels:
 dependencies:
   - fastp=0.23.2
   - pigz=2.6
+  - samtools=1.17

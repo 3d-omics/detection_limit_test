@@ -1,4 +1,4 @@
-rule diversity_nonpareil_one:
+rule stats_nonpareil_one:
     """
     Note: Nonpareil only ask for one of the pair-end reads
     Note2: it has to be fastq. The process substitution trick does not work
@@ -6,15 +6,15 @@ rule diversity_nonpareil_one:
     input:
         forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
     output:
-        forward_fq=temp(DIVERSITY / "{sample}.{library}_nonchicken_1.fq"),
-        npa=DIVERSITY / "{sample}.{library}.npa",
-        npc=DIVERSITY / "{sample}.{library}.npc",
-        npl=DIVERSITY / "{sample}.{library}.npl",
-        npo=DIVERSITY / "{sample}.{library}.npo",
+        forward_fq=temp(STATS / "{sample}.{library}_nonchicken_1.fq"),
+        npa=STATS / "{sample}.{library}.npa",
+        npc=STATS / "{sample}.{library}.npc",
+        npl=STATS / "{sample}.{library}.npl",
+        npo=STATS / "{sample}.{library}.npo",
     log:
-        DIVERSITY / "{sample}.{library}_nonchicken_1.log",
+        STATS / "{sample}.{library}_nonchicken_1.log",
     conda:
-        "../envs/diversity.yml"
+        "../envs/stats.yml"
     params:
         prefix=compose_prefix_for_nonpareil,
     shell:
@@ -31,16 +31,16 @@ rule diversity_nonpareil_one:
         """
 
 
-rule diversity_nonpareil_all:
+rule stats_nonpareil_all:
     input:
         [
-            DIVERSITY / f"{sample}.{library}.{extension}"
+            STATS / f"{sample}.{library}.{extension}"
             for extension in ["npa", "npc", "npl", "npo"]
             for sample, library in SAMPLE_LIB
         ],
 
 
-rule diversity_singlem_one:
+rule stats_singlem_one:
     """
     Note: SingleM asks in the documentation for the raw reads. Here we are
     passing it the non-host and trimmed ones.
@@ -49,11 +49,11 @@ rule diversity_singlem_one:
         forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
         reverse_=BOWTIE2 / "{sample}.{library}.nonchicken_2.fq.gz",
     output:
-        otu_table=DIVERSITY / "{sample}.{library}.otu_table.tsv",
+        otu_table=STATS / "{sample}.{library}.otu_table.tsv",
     log:
-        DIVERSITY / "{sample}.{library}.singlem.log",
+        STATS / "{sample}.{library}.singlem.log",
     conda:
-        "../envs/diversity.yml"
+        "../envs/stats.yml"
     threads: 4
     shell:
         """
@@ -66,26 +66,23 @@ rule diversity_singlem_one:
         """
 
 
-rule diversity_singlem_all:
+rule stats_singlem_all:
     input:
-        [
-            DIVERSITY / f"{sample}.{library}.otu_table.tsv"
-            for sample, library in SAMPLE_LIB
-        ],
+        [STATS / f"{sample}.{library}.otu_table.tsv" for sample, library in SAMPLE_LIB],
 
 
-rule diversity_coverm_overall:
+rule stats_coverm_overall:
     input:
         crams=[
             BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB
         ],
         mags=REFERENCE / "mags.fa.gz",
     output:
-        DIVERSITY / "coverm_overall.tsv",
+        STATS / "coverm_overall.tsv",
     log:
-        DIVERSITY / "coverm_overall.log",
+        STATS / "coverm_overall.log",
     conda:
-        "../envs/diversity.yml"
+        "../envs/stats.yml"
     params:
         methods=params["coverm"]["genome"]["methods"],
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
@@ -103,18 +100,18 @@ rule diversity_coverm_overall:
         """
 
 
-rule diversity_coverm_contig:
+rule stats_coverm_contig:
     input:
         crams=[
             BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB
         ],
         mags=REFERENCE / "mags.fa.gz",
     output:
-        DIVERSITY / "coverm_contig.tsv",
+        STATS / "coverm_contig.tsv",
     log:
-        DIVERSITY / "coverm_contig.log",
+        STATS / "coverm_contig.log",
     conda:
-        "../envs/diversity.yml"
+        "../envs/stats.yml"
     params:
         methods=params["coverm"]["contig"]["methods"],
     threads: 24
@@ -129,14 +126,14 @@ rule diversity_coverm_contig:
         """
 
 
-rule diversity_coverm_all:
+rule stats_coverm_all:
     input:
-        rules.diversity_coverm_overall.output,
-        rules.diversity_coverm_contig.output,
+        rules.stats_coverm_overall.output,
+        rules.stats_coverm_contig.output,
 
 
-rule diversity:
+rule stats:
     input:
-        rules.diversity_nonpareil_all.input,
-        rules.diversity_singlem_all.input,
-        rules.diversity_coverm_all.input,
+        rules.stats_nonpareil_all.input,
+        rules.stats_singlem_all.input,
+        rules.stats_coverm_all.input,

@@ -26,8 +26,8 @@ include: "rules/fastp_functions.smk"
 include: "rules/fastp.smk"
 include: "rules/bowtie2_functions.smk"
 include: "rules/bowtie2.smk"
-include: "rules/diversity_functions.smk"
-include: "rules/diversity.smk"
+include: "rules/stats_functions.smk"
+include: "rules/stats.smk"
 
 
 rule all:
@@ -35,4 +35,4 @@ rule all:
         # rules.reads.input,
         # rules.fastp.input,
         # rules.bowtie2.input,
-        rules.diversity.input,
+        rules.stats.input,

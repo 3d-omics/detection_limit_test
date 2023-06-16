@@ -1,29 +1,20 @@
-rule bowtie2_build_human:
+rule bowtie2_build:
     """Build bowtie2 index for the human reference
 
     Let the script decide to use a small or a large index based on the size of
     the reference genome.
     """
     input:
-        reference=REFERENCE / "human.fa.gz",
+        reference=REFERENCE / "{genome}.fa.gz",
     output:
-        multiext(
-            f"{REFERENCE}/human",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
-        ),
+        mock=touch(REFERENCE / "{genome}"),
     log:
-        BOWTIE2 / "build_human.log",
+        BOWTIE2 / "build_{genome}.log",
     benchmark:
-        BOWTIE2 / "build_human.bmk"
+        BOWTIE2 / "build_{genome}.bmk"
     conda:
         "../envs/bowtie2.yml"
     params:
-        output_path=REFERENCE / "human",
         extra=params["bowtie2"]["extra"],
     threads: 8
     shell:
@@ -32,7 +23,7 @@ rule bowtie2_build_human:
             --threads {threads} \
             {params.extra} \
             {input.reference} \
-            {params.output_path} \
+            {output.mock} \
         2> {log} 1>&2
         """
 
@@ -45,15 +36,7 @@ rule bowtie2_map_human_one:
     input:
         forward_=FASTP / "{sample}.{library}_1.fq.gz",
         reverse_=FASTP / "{sample}.{library}_2.fq.gz",
-        idx=multiext(
-            f"{REFERENCE}/human",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
-        ),
+        mock=REFERENCE / "human",
         reference=REFERENCE / "human.fa.gz",
     output:
         cram=protected(BOWTIE2 / "{sample}.{library}.human.cram"),
@@ -78,7 +61,7 @@ rule bowtie2_map_human_one:
     shell:
         """
         (bowtie2 \
-            -x {params.index_prefix} \
+            -x {input.mock} \
             -1 {input.forward_} \
             -2 {input.reverse_} \
             --threads {threads} \
@@ -143,45 +126,6 @@ rule bowtie2_extract_nonhuman_all:
         ],
 
 
-rule bowtie2_build_chicken:
-    """Build bowtie2 index for the human reference
-
-    Let the script decide to use a small or a large index based on the size of
-    the reference genome.
-    """
-    input:
-        reference=REFERENCE / "chicken.fa.gz",
-    output:
-        multiext(
-            f"{REFERENCE}/chicken",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
-        ),
-    log:
-        BOWTIE2 / "build_chicken.log",
-    benchmark:
-        BOWTIE2 / "build_chicken.bmk"
-    conda:
-        "../envs/bowtie2.yml"
-    params:
-        output_path=REFERENCE / "chicken",
-        extra=params["bowtie2"]["extra"],
-    threads: 8
-    shell:
-        """
-        bowtie2-build \
-            --threads {threads} \
-            {params.extra} \
-            {input.reference} \
-            {params.output_path} \
-        2> {log} 1>&2
-        """
-
-
 rule bowtie2_map_chicken_one:
     """Map one library to reference genome using bowtie2
 
@@ -190,15 +134,7 @@ rule bowtie2_map_chicken_one:
     input:
         forward_=BOWTIE2 / "{sample}.{library}.nonhuman_1.fq.gz",
         reverse_=BOWTIE2 / "{sample}.{library}.nonhuman_2.fq.gz",
-        idx=multiext(
-            f"{REFERENCE}/chicken",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
-        ),
+        mock=REFERENCE / "chicken",
         reference=REFERENCE / "chicken.fa.gz",
     output:
         cram=protected(BOWTIE2 / "{sample}.{library}.chicken.cram"),
@@ -221,7 +157,7 @@ rule bowtie2_map_chicken_one:
     shell:
         """
         (bowtie2 \
-            -x {params.index_prefix} \
+            -x {input.mock} \
             -1 {input.forward_} \
             -2 {input.reverse_} \
             --threads {threads} \
@@ -296,45 +232,6 @@ rule bowtie2_extract_nonchicken_all:
         ],
 
 
-rule bowtie2_build_mags:
-    """Build bowtie2 index for the human reference
-
-    Let the script decide to use a small or a large index based on the size of
-    the reference genome.
-    """
-    input:
-        reference=REFERENCE / "mags.fa.gz",
-    output:
-        multiext(
-            f"{REFERENCE}/mags",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
-        ),
-    log:
-        BOWTIE2 / "build_mags.log",
-    benchmark:
-        BOWTIE2 / "build_mags.bmk"
-    conda:
-        "../envs/bowtie2.yml"
-    params:
-        output_path=REFERENCE / "mags",
-        extra=params["bowtie2"]["extra"],
-    threads: 8
-    shell:
-        """
-        bowtie2-build \
-            --threads {threads} \
-            {params.extra} \
-            {input.reference} \
-            {params.output_path} \
-        2> {log} 1>&2
-        """
-
-
 rule bowtie2_map_mags_one:
     """Map one library to reference genome using bowtie2
 
@@ -343,15 +240,7 @@ rule bowtie2_map_mags_one:
     input:
         forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
         reverse_=BOWTIE2 / "{sample}.{library}.nonchicken_2.fq.gz",
-        idx=multiext(
-            f"{REFERENCE}/mags",
-            ".1.bt2",
-            ".2.bt2",
-            ".3.bt2",
-            ".4.bt2",
-            ".rev.1.bt2",
-            ".rev.2.bt2",
-        ),
+        mock=REFERENCE / "mags",
         reference=REFERENCE / "mags.fa.gz",
     output:
         cram=protected(BOWTIE2 / "{sample}.{library}.mags.cram"),
@@ -374,7 +263,7 @@ rule bowtie2_map_mags_one:
     shell:
         """
         (bowtie2 \
-            -x {params.index_prefix} \
+            -x {input.mock} \
             -1 {input.forward_} \
             -2 {input.reverse_} \
             --threads {threads} \

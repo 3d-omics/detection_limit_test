@@ -18,7 +18,7 @@ rule fastp_trim_one:
         extra=params["fastp"]["extra"],
     threads: 24
     resources:
-        mem_mb=1024,
+        mem_mb=4 * 1024,
         runtime=240,
     conda:
         "../envs/fastp.yml"

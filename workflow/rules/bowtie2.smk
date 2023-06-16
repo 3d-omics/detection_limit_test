@@ -56,7 +56,7 @@ rule bowtie2_map_human_one:
         ),
         reference=REFERENCE / "human.fa.gz",
     output:
-        cram=BOWTIE2 / "{sample}.{library}.human.cram",
+        cram=protected(BOWTIE2 / "{sample}.{library}.human.cram"),
     log:
         BOWTIE2 / "{sample}.{library}.human.log",
     benchmark:
@@ -201,7 +201,7 @@ rule bowtie2_map_chicken_one:
         ),
         reference=REFERENCE / "chicken.fa.gz",
     output:
-        cram=BOWTIE2 / "{sample}.{library}.chicken.cram",
+        cram=protected(BOWTIE2 / "{sample}.{library}.chicken.cram"),
     log:
         BOWTIE2 / "{sample}.{library}.chicken.log",
     benchmark:
@@ -354,7 +354,7 @@ rule bowtie2_map_mags_one:
         ),
         reference=REFERENCE / "mags.fa.gz",
     output:
-        cram=BOWTIE2 / "{sample}.{library}.mags.cram",
+        cram=protected(BOWTIE2 / "{sample}.{library}.mags.cram"),
     log:
         BOWTIE2 / "{sample}.{library}.mags.log",
     benchmark:
@@ -397,22 +397,23 @@ rule bowtie2_map_mags_all:
         [BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB],
 
 
-# rule bowtie2_report_all:
-#     """Generate bowtie2 reports for all libraries:
-#     - samtools stats
-#     - samtools flagstats
-#     - samtools idxstats
-#     """
-#     input:
-#         [
-#             BOWTIE2 / f"{sample}.{library}.{report}"
-#             for sample, library in SAMPLE_LIB
-#             for report in BAM_REPORTS
-#         ],
+rule bowtie2_report_all:
+    """Generate bowtie2 reports for all libraries:
+    - samtools stats
+    - samtools flagstats
+    - samtools idxstats
+    """
+    input:
+        [
+            BOWTIE2 / f"{sample}.{library}.{animal}.{report}"
+            for sample, library in SAMPLE_LIB
+            for report in BAM_REPORTS
+            for animal in ["human", "chicken", "mags"]
+        ],
 
 
 rule bowtie2:
     """Run bowtie2 on all libraries and generate reports"""
     input:
-        # rules.bowtie2_report_all.input,
+        rules.bowtie2_report_all.input,
         rules.bowtie2_map_mags_all.input,

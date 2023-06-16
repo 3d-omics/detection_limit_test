@@ -8,7 +8,7 @@ rule fastp_trim_one:
         reverse_=temp(FASTP / "{sample}.{library}_2.fq.gz"),
         unpaired1=temp(FASTP / "{sample}.{library}_u1.fq.gz"),
         unpaired2=temp(FASTP / "{sample}.{library}_u2.fq.gz"),
-        html=FASTP / "{sample}.{library}.html",
+        html=FASTP / "{sample}.{library}_fastp.html",
         json=FASTP / "{sample}.{library}_fastp.json",
     log:
         FASTP / "{sample}.{library}.log",
@@ -53,24 +53,6 @@ rule fastp_trim_all:
         ],
 
 
-# rule fastp_fastqc_all:
-#     """Run fastqc over all libraries"""
-#     input:
-#         [
-#             FASTP / f"{sample}.{library}_{end}_fastqc.{extension}"
-#             for sample, library in SAMPLE_LIB
-#             for end in ["1", "2"]
-#             for extension in ["html", "zip"]
-#         ],
-
-
-# rule fastp_report_all:
-#     """Collect fastp and fastqc reports"""
-#     input:
-#         [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIB],
-#         rules.fastp_fastqc_all.input,
-
-
 rule fastp_index_one:
     input:
         FASTP / "{sample}.{library}_{end}.fq.gz",
@@ -85,8 +67,26 @@ rule fastp_index_one:
         "samtools fqidx {input} 2> {log} 1>&2"
 
 
+rule fastp_fastqc_all:
+    """Run fastqc over all libraries"""
+    input:
+        [
+            FASTP / f"{sample}.{library}_{end}_fastqc.{extension}"
+            for sample, library in SAMPLE_LIB
+            for end in ["1", "2"]
+            for extension in ["html", "zip"]
+        ],
+
+
+rule fastp_report_all:
+    """Collect fastp and fastqc reports"""
+    input:
+        [FASTP / f"{sample}.{library}_fastp.json" for sample, library in SAMPLE_LIB],
+        rules.fastp_fastqc_all.input,
+
+
 rule fastp:
     """Run fastp and collect reports"""
     input:
         rules.fastp_trim_all.input,
-        # rules.fastp_report_all.input,
+        rules.fastp_report_all.input,

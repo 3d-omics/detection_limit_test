@@ -42,4 +42,4 @@ rule reads:
     """Link all reads and run fastqc on them"""
     input:
         rules.reads_link_all.input,
-        # rules.reads_fastqc_all.input,
+        rules.reads_fastqc_all.input,

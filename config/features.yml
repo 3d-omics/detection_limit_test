@@ -1,3 +1,5 @@
+# Configuration file for the features, aka, references
+---
 reference:
   human: resources/reference/human_22_sub.fa.gz
   chicken: resources/reference/chicken_39_sub.fa.gz

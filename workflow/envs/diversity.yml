@@ -1,3 +1,5 @@
+# Tools to get statistics on the metagenomes without assembling
+---
 channels:
   - conda-forge
   - bioconda

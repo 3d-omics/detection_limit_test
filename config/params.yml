@@ -1,3 +1,5 @@
+# Execution parameters
+---
 fastp:
   extra: "--trim_poly_g --trim_poly_x"
 

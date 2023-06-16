@@ -1,3 +1,5 @@
+# environment for fastp trimming and fastq indexing
+---
 channels:
   - conda-forge
   - bioconda

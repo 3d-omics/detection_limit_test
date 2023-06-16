@@ -23,6 +23,8 @@ rule report_library_one:
             --force \
             --filename {params.library} \
             --outdir {params.out_dir} \
+            --dirs \
+            --dirs-depth 1 \
             {input} \
         2> {log} 1>&2
         """

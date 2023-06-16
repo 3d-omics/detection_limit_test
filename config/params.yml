@@ -14,3 +14,6 @@ coverm:
     min_covered_fraction: 0.0
   contig:
     methods: "count"
+
+singlem:
+  threads: 1  # raise it at your own . on the tests one is enough

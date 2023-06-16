@@ -54,7 +54,7 @@ rule stats_singlem_one:
         STATS / "{sample}.{library}.singlem.log",
     conda:
         "../envs/stats.yml"
-    threads: 4
+    threads: params["singlem"]["threads"]
     shell:
         """
         singlem pipe \

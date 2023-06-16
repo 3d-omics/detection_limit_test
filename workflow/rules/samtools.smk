@@ -25,7 +25,13 @@ rule samtools_stats_cram:
     conda:
         "../envs/samtools.yml"
     shell:
-        "samtools stats --reference {input.reference} {input.cram} > {output.tsv} 2> {log}"
+        """
+        samtools stats \
+            --reference {input.reference} \
+            {input.cram} \
+        > {output.tsv} \
+        2> {log}
+        """
 
 
 rule samtools_flagstats_cram:

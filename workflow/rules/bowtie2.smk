@@ -405,10 +405,10 @@ rule bowtie2_report_all:
     """
     input:
         [
-            BOWTIE2 / f"{sample}.{library}.{animal}.{report}"
+            BOWTIE2 / f"{sample}.{library}.{genome}.{report}"
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
-            for animal in ["human", "chicken", "mags"]
+            for genome in GENOMES
         ],
 
 

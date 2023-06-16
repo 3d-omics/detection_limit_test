@@ -107,6 +107,7 @@ rule bowtie2_extract_nonhuman_one:
         fqgz=FASTP / "{sample}.{library}_{end}.fq.gz",
         fqgz_fai=FASTP / "{sample}.{library}_{end}.fq.gz.fai",
         fqgz_gzi=FASTP / "{sample}.{library}_{end}.fq.gz.gzi",
+        reference=REFERENCE / "human.fa.gz",
     output:
         fqgz=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz",
     log:
@@ -118,7 +119,7 @@ rule bowtie2_extract_nonhuman_one:
         "../envs/bowtie2.yml"
     shell:
         """
-        samtools view {input.cram} \
+        samtools view --reference {input.reference} {input.cram} \
         | awk '$3 == "*"' \
         | cut -f 1 \
         | awk '{{print $0"{params.end}"}}' \
@@ -259,6 +260,7 @@ rule bowtie2_extract_nonchicken_one:
         fqgz=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz",
         fqgz_fai=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz.fai",
         fqgz_gzi=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz.gzi",
+        reference=REFERENCE / "chicken.fa.gz",
     output:
         fqgz=BOWTIE2 / "{sample}.{library}.nonchicken_{end}.fq.gz",
     log:
@@ -270,7 +272,7 @@ rule bowtie2_extract_nonchicken_one:
         "../envs/bowtie2.yml"
     shell:
         """
-        samtools view {input.cram} \
+        samtools view --reference {input.reference} {input.cram} \
         | awk '$3 == "*"' \
         | cut -f 1 \
         | awk '{{print $0"{params.end}"}}' \

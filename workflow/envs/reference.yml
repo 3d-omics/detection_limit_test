@@ -1,10 +1,9 @@
-# environment for fastp trimming and fastq indexing
+# Environment to link and index references
 ---
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
-  - fastp=0.23.2
-  - pigz=2.6
   - samtools=1.17
+  - coreutils=9.3

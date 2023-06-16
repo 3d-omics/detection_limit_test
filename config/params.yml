@@ -1,3 +1,19 @@
+# Execution parameters
+---
 fastp:
-  adapter_fwd: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
-  adapter_rev: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+  extra: "--trim_poly_g --trim_poly_x"
+
+bowtie2:
+  extra: ""
+  samtools:
+    mem_per_thread: 1G
+
+coverm:
+  genome:
+    methods: "relative_abundance"
+    min_covered_fraction: 0.0
+  contig:
+    methods: "count"
+
+singlem:
+  threads: 1  # raise it at your own . on the tests one is enough

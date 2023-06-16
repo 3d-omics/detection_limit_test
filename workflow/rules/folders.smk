@@ -1,4 +1,8 @@
 READS = Path("results/reads/")
 REFERENCE = Path("results/reference/")
 FASTP = Path("results/fastp/")
-MAP_HUMAN = Path("results/map_human/")
+BOWTIE2 = Path("results/bowtie2/")
+STATS = Path("results/stats/")
+
+REPORT_STEP = Path("reports/by_step/")
+REPORT_LIBRARY = Path("reports/by_library/")

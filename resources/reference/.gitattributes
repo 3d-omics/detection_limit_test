@@ -1,0 +1,6 @@
+mags_sub.fa filter=lfs diff=lfs merge=lfs -text
+chicken_39_sub.fa filter=lfs diff=lfs merge=lfs -text
+human_22_sub.fa filter=lfs diff=lfs merge=lfs -text
+mags_sub.fa.gz filter=lfs diff=lfs merge=lfs -text
+chicken_39_sub.fa.gz filter=lfs diff=lfs merge=lfs -text
+human_22_sub.fa.gz filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,12 @@
+# Tools to get statistics on the metagenomes without assembling
+---
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - gzip=1.12
+  - nonpareil=3.4.1
+  - singlem=0.13.2
+  - bird_tool_utils_python=0.4.1
+  - coverm=0.6.1

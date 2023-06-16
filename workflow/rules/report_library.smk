@@ -6,12 +6,7 @@ rule report_library_one:
         FASTP / "{sample}.{library}_fastp.json",
         FASTP / "{sample}.{library}_1_fastqc.zip",
         FASTP / "{sample}.{library}_2_fastqc.zip",
-        [
-            BOWTIE2 / f"{sample}.{library}.{genome}.{report}"
-            for genome in GENOMES
-            for sample, library in SAMPLE_LIB
-            for report in BAM_REPORTS
-        ],
+        get_bowtie2_for_library_reports,
     output:
         REPORT_LIBRARY / "{sample}.{library}.html",
     log:

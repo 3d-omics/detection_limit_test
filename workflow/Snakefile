@@ -26,6 +26,7 @@ include: "rules/fastp_functions.smk"
 include: "rules/fastp.smk"
 include: "rules/bowtie2_functions.smk"
 include: "rules/bowtie2.smk"
+include: "rules/diversity_functions.smk"
 include: "rules/diversity.smk"
 
 

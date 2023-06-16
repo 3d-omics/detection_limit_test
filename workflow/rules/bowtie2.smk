@@ -56,7 +56,7 @@ rule bowtie2_map_human_one:
         ),
         reference=REFERENCE / "human.fa.gz",
     output:
-        cram=protected(BOWTIE2 / "{sample}.{library}.human.cram"),
+        cram=BOWTIE2 / "{sample}.{library}.human.cram",
     log:
         BOWTIE2 / "{sample}.{library}.human.log",
     benchmark:
@@ -102,6 +102,10 @@ rule bowtie2_map_human_all:
 
 
 rule bowtie2_extract_nonhuman_one:
+    """
+
+    Note: the sed line is so the linter shuts up about absolute paths
+    """
     input:
         cram=BOWTIE2 / "{sample}.{library}.human.cram",
         fqgz=FASTP / "{sample}.{library}_{end}.fq.gz",
@@ -114,19 +118,19 @@ rule bowtie2_extract_nonhuman_one:
         BOWTIE2 / "{sample}.{library}.nonhuman_{end}.log",
     threads: 24
     params:
-        end=lambda wildcards: f"/{wildcards.end}",
+        end="{end}",
     conda:
         "../envs/bowtie2.yml"
     shell:
         """
-        samtools view --reference {input.reference} {input.cram} \
+        (samtools view --reference {input.reference} {input.cram} \
         | awk '$3 == "*"' \
         | cut -f 1 \
-        | awk '{{print $0"{params.end}"}}' \
+        | sed -e 's/$/\/{params.end}/' \
         | sort -u \
         | xargs samtools fqidx {input.fqgz}  \
         | bgzip -l 9 -@ {threads} \
-        > {output.fqgz}
+        > {output.fqgz}) 2> {log}
         """
 
 
@@ -197,7 +201,7 @@ rule bowtie2_map_chicken_one:
         ),
         reference=REFERENCE / "chicken.fa.gz",
     output:
-        cram=protected(BOWTIE2 / "{sample}.{library}.chicken.cram"),
+        cram=BOWTIE2 / "{sample}.{library}.chicken.cram",
     log:
         BOWTIE2 / "{sample}.{library}.chicken.log",
     benchmark:
@@ -267,19 +271,19 @@ rule bowtie2_extract_nonchicken_one:
         BOWTIE2 / "{sample}.{library}.nonchicken_{end}.log",
     threads: 24
     params:
-        end=lambda wildcards: f"/{wildcards.end}",
+        end="{end}",
     conda:
         "../envs/bowtie2.yml"
     shell:
         """
-        samtools view --reference {input.reference} {input.cram} \
+        (samtools view --reference {input.reference} {input.cram} \
         | awk '$3 == "*"' \
         | cut -f 1 \
-        | awk '{{print $0"{params.end}"}}' \
+        | sed -e 's/$/\/{params.end}/' \
         | sort -u \
         | xargs samtools fqidx {input.fqgz}  \
         | bgzip -l 9 -@ {threads} \
-        > {output.fqgz}
+        > {output.fqgz}) 2> {log} 1>&2
         """
 
 
@@ -350,7 +354,7 @@ rule bowtie2_map_mags_one:
         ),
         reference=REFERENCE / "mags.fa.gz",
     output:
-        cram=protected(BOWTIE2 / "{sample}.{library}.mags.cram"),
+        cram=BOWTIE2 / "{sample}.{library}.mags.cram",
     log:
         BOWTIE2 / "{sample}.{library}.mags.log",
     benchmark:

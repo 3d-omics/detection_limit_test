@@ -1,7 +1,3 @@
-def compose_prefix_for_nonpareil(wildcards):
-    return DIVERSITY / f"{wildcards.sample}.{wildcards.library}"
-
-
 rule diversity_nonpareil_one:
     """
     Note: Nonpareil only ask for one of the pair-end reads
@@ -133,9 +129,14 @@ rule diversity_coverm_contig:
         """
 
 
+rule diversity_coverm_all:
+    input:
+        rules.diversity_coverm_overall.output,
+        rules.diversity_coverm_contig.output,
+
+
 rule diversity:
     input:
         rules.diversity_nonpareil_all.input,
         rules.diversity_singlem_all.input,
-        rules.diversity_coverm_overall.output,
-        rules.diversity_coverm_contig.output,
+        rules.diversity_coverm_all.input,

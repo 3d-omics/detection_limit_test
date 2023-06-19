@@ -90,36 +90,34 @@ rule bowtie2_map_human_all:
 rule bowtie2_extract_nonhuman_one:
     """
 
-    Note: the sed line is so the linter shuts up about absolute paths
+    I wish there were a way to do this without having to merge the BAM files
     """
     input:
         cram=BOWTIE2 / "{sample}.{library}.human.cram",
-        fqgz=FASTP / "{sample}.{library}_{end}.fq.gz",
-        fqgz_fai=FASTP / "{sample}.{library}_{end}.fq.gz.fai",
-        fqgz_gzi=FASTP / "{sample}.{library}_{end}.fq.gz.gzi",
         reference=REFERENCE / "human.fa.gz",
     output:
-        fqgz=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz",
+        forward_=BOWTIE2 / "{sample}.{library}.nonhuman_1.fq.gz",
+        reverse_=BOWTIE2 / "{sample}.{library}.nonhuman_2.fq.gz",
     log:
-        BOWTIE2 / "{sample}.{library}.nonhuman_{end}.log",
+        BOWTIE2 / "{sample}.{library}.nonhuman.log",
     threads: 24
     resources:
-        mem_mb=16 * 1024,
-        runtime=240,
-    params:
-        end="{end}",
+        mem_mb=4 * 1024,
+        runtime=24 * 60,
     conda:
         "../envs/bowtie2.yml"
     shell:
         """
-        (samtools view --reference {input.reference} {input.cram} \
-        | awk '$3 == "*"' \
-        | cut -f 1 \
-        | sed -e 's/$/\/{params.end}/' \
-        | sort -u \
-        | xargs samtools fqidx {input.fqgz}  \
-        | bgzip -l 9 -@ {threads} \
-        > {output.fqgz}) 2> {log}
+        (samtools merge \
+            -o /dev/stdout \
+            <(samtools view -u -f 4  -F 264 {input.cram}) \
+            <(samtools view -u -f 8  -F 260 {input.cram}) \
+            <(samtools view -u -f 12 -F 256 {input.cram}) \
+        | samtools fastq \
+            -1 {output.forward_} \
+            -2 {output.reverse_} \
+            -0 /dev/null) \
+        2> {log} 1>&2
         """
 
 
@@ -186,49 +184,29 @@ rule bowtie2_map_chicken_all:
         [BOWTIE2 / f"{sample}.{library}.chicken.cram" for sample, library in SAMPLE_LIB],
 
 
-rule bowtie2_index_nonhuman_one:
-    input:
-        fqgz=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz",
-    output:
-        fqgz_fai=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz.fai",
-        fqgz_gzi=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz.gzi",
-    conda:
-        "../envs/bowtie2.yml"
-    log:
-        BOWTIE2 / "{sample}.{library}.nonhuman_{end}.index.log",
-    shell:
-        "samtools fqidx {input.fqgz} 2> {log} 1>&2"
-
-
 rule bowtie2_extract_nonchicken_one:
     input:
         cram=BOWTIE2 / "{sample}.{library}.chicken.cram",
-        fqgz=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz",
-        fqgz_fai=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz.fai",
-        fqgz_gzi=BOWTIE2 / "{sample}.{library}.nonhuman_{end}.fq.gz.gzi",
         reference=REFERENCE / "chicken.fa.gz",
     output:
-        fqgz=BOWTIE2 / "{sample}.{library}.nonchicken_{end}.fq.gz",
+        forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
+        reverse_=BOWTIE2 / "{sample}.{library}.nonchicken_2.fq.gz",
     log:
-        BOWTIE2 / "{sample}.{library}.nonchicken_{end}.log",
-    threads: 24
-    resources:
-        mem_mb=16 * 1024,
-        runtime=240,
-    params:
-        end="{end}",
+        BOWTIE2 / "{sample}.{library}.nonchicken.log",
     conda:
         "../envs/bowtie2.yml"
     shell:
         """
-        (samtools view --reference {input.reference} {input.cram} \
-        | awk '$3 == "*"' \
-        | cut -f 1 \
-        | sed -e 's/$/\/{params.end}/' \
-        | sort -u \
-        | xargs samtools fqidx {input.fqgz}  \
-        | bgzip -l 9 -@ {threads} \
-        > {output.fqgz}) 2> {log} 1>&2
+        (samtools merge \
+            -o /dev/stdout \
+            <(samtools view -u -f 4  -F 264 {input.cram}) \
+            <(samtools view -u -f 8  -F 260 {input.cram}) \
+            <(samtools view -u -f 12 -F 256 {input.cram}) \
+        | samtools fastq \
+            -1 {output.forward_} \
+            -2 {output.reverse_} \
+            -0 /dev/null) \
+        2> {log} 1>&2
         """
 
 

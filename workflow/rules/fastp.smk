@@ -64,7 +64,7 @@ rule fastp_index_one:
     conda:
         "../envs/fastp.yml"
     resources:
-        mem_mb=8 * 1024,
+        mem_mb=16 * 1024,
         runtime=240,
     shell:
         "samtools fqidx {input} 2> {log} 1>&2"

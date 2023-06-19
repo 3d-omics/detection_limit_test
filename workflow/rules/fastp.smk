@@ -63,6 +63,9 @@ rule fastp_index_one:
         FASTP / "{sample}.{library}_{end}.index.log",
     conda:
         "../envs/fastp.yml"
+    resources:
+        mem_mb=8 * 1024,
+        runtime=240,
     shell:
         "samtools fqidx {input} 2> {log} 1>&2"
 

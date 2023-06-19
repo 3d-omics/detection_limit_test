@@ -100,10 +100,6 @@ rule bowtie2_extract_nonhuman_one:
         reverse_=BOWTIE2 / "{sample}.{library}.nonhuman_2.fq.gz",
     log:
         BOWTIE2 / "{sample}.{library}.nonhuman.log",
-    threads: 24
-    resources:
-        mem_mb=4 * 1024,
-        runtime=24 * 60,
     conda:
         "../envs/bowtie2.yml"
     shell:

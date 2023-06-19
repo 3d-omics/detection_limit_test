@@ -103,6 +103,9 @@ rule bowtie2_extract_nonhuman_one:
     log:
         BOWTIE2 / "{sample}.{library}.nonhuman_{end}.log",
     threads: 24
+    resources:
+        mem_mb=8 * 1024,
+        runtime=240,
     params:
         end="{end}",
     conda:
@@ -209,6 +212,9 @@ rule bowtie2_extract_nonchicken_one:
     log:
         BOWTIE2 / "{sample}.{library}.nonchicken_{end}.log",
     threads: 24
+    resources:
+        mem_mb=8 * 1024,
+        runtime=240,
     params:
         end="{end}",
     conda:

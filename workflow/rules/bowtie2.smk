@@ -102,6 +102,7 @@ rule bowtie2_extract_nonhuman_one:
         BOWTIE2 / "{sample}.{library}.nonhuman.log",
     conda:
         "../envs/bowtie2.yml"
+    threads: 8
     shell:
         """
         (samtools merge \
@@ -112,7 +113,9 @@ rule bowtie2_extract_nonhuman_one:
         | samtools fastq \
             -1 {output.forward_} \
             -2 {output.reverse_} \
-            -0 /dev/null) \
+            -0 /dev/null \
+            -c 9 \
+            --threads {threads}) \
         2> {log} 1>&2
         """
 

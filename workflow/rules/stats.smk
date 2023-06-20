@@ -4,9 +4,9 @@ rule stats_nonpareil_one:
     Note2: it has to be fastq. The process substitution trick does not work
     """
     input:
-        forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
+        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
     output:
-        forward_fq=temp(STATS / "{sample}.{library}_nonchicken_1.fq"),
+        forward_fq=temp(STATS / "{sample}.{library}_1.fq"),
         npa=STATS / "{sample}.{library}.npa",
         npc=STATS / "{sample}.{library}.npc",
         npl=STATS / "{sample}.{library}.npl",
@@ -48,8 +48,8 @@ rule stats_singlem_one:
     passing it the non-host and trimmed ones.
     """
     input:
-        forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
-        reverse_=BOWTIE2 / "{sample}.{library}.nonchicken_2.fq.gz",
+        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
+        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
     output:
         otu_table=STATS / "{sample}.{library}.otu_table.tsv",
     log:
@@ -78,10 +78,10 @@ rule stats_singlem_all:
 rule stats_coverm_overall:
     input:
         crams=[
-            BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB
+            BOWTIE2_MAGS / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB
         ],
         crais=[
-            BOWTIE2 / f"{sample}.{library}.mags.cram.crai"
+            BOWTIE2_MAGS / f"{sample}.{library}.cram.crai"
             for sample, library in SAMPLE_LIB
         ],
         mags=REFERENCE / "mags.fa.gz",
@@ -113,10 +113,10 @@ rule stats_coverm_overall:
 rule stats_coverm_contig:
     input:
         crams=[
-            BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB
+            BOWTIE2_MAGS / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB
         ],
         crais=[
-            BOWTIE2 / f"{sample}.{library}.mags.cram.crai"
+            BOWTIE2_MAGS / f"{sample}.{library}.cram.crai"
             for sample, library in SAMPLE_LIB
         ],
         mags=REFERENCE / "mags.fa.gz",

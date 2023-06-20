@@ -65,6 +65,8 @@ rule report_step_bowtie2:
             --force \
             --filename bowtie2 \
             --outdir {params.dir} \
+            --dirs \
+            --dirs-depth 1 \
             {input} \
         2> {log} 1>&2
         """

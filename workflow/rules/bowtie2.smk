@@ -7,11 +7,11 @@ rule bowtie2_build:
     input:
         reference=REFERENCE / "{genome}.fa.gz",
     output:
-        mock=touch(REFERENCE / "{genome}"),
+        mock=touch(BOWTIE2_INDEX / "{genome}"),
     log:
-        BOWTIE2 / "build_{genome}.log",
+        BOWTIE2_INDEX / "build_{genome}.log",
     benchmark:
-        BOWTIE2 / "build_{genome}.bmk"
+        BOWTIE2_INDEX / "build_{genome}.bmk"
     conda:
         "../envs/bowtie2.yml"
     params:
@@ -39,22 +39,19 @@ rule bowtie2_map_human_one:
     input:
         forward_=FASTP / "{sample}.{library}_1.fq.gz",
         reverse_=FASTP / "{sample}.{library}_2.fq.gz",
-        mock=REFERENCE / "human",
+        mock=BOWTIE2_INDEX / "human",
         reference=REFERENCE / "human.fa.gz",
     output:
-        cram=protected(BOWTIE2 / "{sample}.{library}.human.cram"),
+        cram=protected(BOWTIE2_HUMAN / "{sample}.{library}.cram"),
     log:
-        BOWTIE2 / "{sample}.{library}.human.log",
+        BOWTIE2_HUMAN / "{sample}.{library}.log",
     benchmark:
-        BOWTIE2 / "{sample}.{library}.human.bmk"
+        BOWTIE2_HUMAN / "{sample}.{library}.bmk"
     params:
-        index_prefix=REFERENCE / "human",
         extra=params["bowtie2"]["extra"],
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
         rg_extra=compose_rg_extra,
-        unpaired_template=lambda wildcards: BOWTIE2
-        / f"{wildcards.sample}.{wildcards.library}.unpaired_%.fq.gz",
     threads: 24
     conda:
         "../envs/bowtie2.yml"
@@ -84,7 +81,7 @@ rule bowtie2_map_human_one:
 
 rule bowtie2_map_human_all:
     input:
-        [BOWTIE2 / f"{sample}.{library}.human.cram" for sample, library in SAMPLE_LIB],
+        [BOWTIE2_HUMAN / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
 
 
 rule bowtie2_extract_nonhuman_one:
@@ -93,13 +90,13 @@ rule bowtie2_extract_nonhuman_one:
     I wish there were a way to do this without having to merge the BAM files
     """
     input:
-        cram=BOWTIE2 / "{sample}.{library}.human.cram",
+        cram=BOWTIE2_HUMAN / "{sample}.{library}.cram",
         reference=REFERENCE / "human.fa.gz",
     output:
-        forward_=BOWTIE2 / "{sample}.{library}.nonhuman_1.fq.gz",
-        reverse_=BOWTIE2 / "{sample}.{library}.nonhuman_2.fq.gz",
+        forward_=BOWTIE2_NONHUMAN / "{sample}.{library}_1.fq.gz",
+        reverse_=BOWTIE2_NONHUMAN / "{sample}.{library}_2.fq.gz",
     log:
-        BOWTIE2 / "{sample}.{library}.nonhuman.log",
+        BOWTIE2_NONHUMAN / "{sample}.{library}.log",
     conda:
         "../envs/bowtie2.yml"
     threads: 8
@@ -125,7 +122,7 @@ rule bowtie2_extract_nonhuman_one:
 rule bowtie2_extract_nonhuman_all:
     input:
         [
-            BOWTIE2 / f"{sample}.{library}.nonhuman_{end}.fq.gz"
+            BOWTIE2_NONHUMAN / f"{sample}.{library}_{end}.fq.gz"
             for sample, library in SAMPLE_LIB
             for end in ["1", "2"]
         ],
@@ -137,18 +134,17 @@ rule bowtie2_map_chicken_one:
     Output SAM file is piped to samtools sort to generate a CRAM file.
     """
     input:
-        forward_=BOWTIE2 / "{sample}.{library}.nonhuman_1.fq.gz",
-        reverse_=BOWTIE2 / "{sample}.{library}.nonhuman_2.fq.gz",
-        mock=REFERENCE / "chicken",
+        forward_=BOWTIE2_NONHUMAN / "{sample}.{library}_1.fq.gz",
+        reverse_=BOWTIE2_NONHUMAN / "{sample}.{library}_2.fq.gz",
+        mock=BOWTIE2_INDEX / "chicken",
         reference=REFERENCE / "chicken.fa.gz",
     output:
-        cram=protected(BOWTIE2 / "{sample}.{library}.chicken.cram"),
+        cram=protected(BOWTIE2_CHICKEN / "{sample}.{library}.cram"),
     log:
-        BOWTIE2 / "{sample}.{library}.chicken.log",
+        BOWTIE2_CHICKEN / "{sample}.{library}.chicken.log",
     benchmark:
-        BOWTIE2 / "{sample}.{library}.chicken.bmk"
+        BOWTIE2_CHICKEN / "{sample}.{library}.chicken.bmk"
     params:
-        index_prefix=REFERENCE / "chicken",
         extra=params["bowtie2"]["extra"],
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
@@ -182,18 +178,18 @@ rule bowtie2_map_chicken_one:
 
 rule bowtie2_map_chicken_all:
     input:
-        [BOWTIE2 / f"{sample}.{library}.chicken.cram" for sample, library in SAMPLE_LIB],
+        [BOWTIE2_CHICKEN / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
 
 
 rule bowtie2_extract_nonchicken_one:
     input:
-        cram=BOWTIE2 / "{sample}.{library}.chicken.cram",
+        cram=BOWTIE2_CHICKEN / "{sample}.{library}.cram",
         reference=REFERENCE / "chicken.fa.gz",
     output:
-        forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
-        reverse_=BOWTIE2 / "{sample}.{library}.nonchicken_2.fq.gz",
+        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
+        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
     log:
-        BOWTIE2 / "{sample}.{library}.nonchicken.log",
+        BOWTIE2_NONCHICKEN / "{sample}.{library}.log",
     conda:
         "../envs/bowtie2.yml"
     threads: 8
@@ -217,7 +213,7 @@ rule bowtie2_extract_nonchicken_one:
 rule bowtie2_extract_nonchicken_all:
     input:
         [
-            BOWTIE2 / f"{sample}.{library}.nonchicken_{end}.fq.gz"
+            BOWTIE2_NONCHICKEN / f"{sample}.{library}_{end}.fq.gz"
             for sample, library in SAMPLE_LIB
             for end in ["1", "2"]
         ],
@@ -229,18 +225,15 @@ rule bowtie2_map_mags_one:
     Output SAM file is piped to samtools sort to generate a CRAM file.
     """
     input:
-        forward_=BOWTIE2 / "{sample}.{library}.nonchicken_1.fq.gz",
-        reverse_=BOWTIE2 / "{sample}.{library}.nonchicken_2.fq.gz",
-        mock=REFERENCE / "mags",
+        forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
+        reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
+        mock=BOWTIE2_INDEX / "mags",
         reference=REFERENCE / "mags.fa.gz",
     output:
-        cram=protected(BOWTIE2 / "{sample}.{library}.mags.cram"),
+        cram=BOWTIE2_MAGS / "{sample}.{library}.cram",
     log:
-        BOWTIE2 / "{sample}.{library}.mags.log",
-    benchmark:
-        BOWTIE2 / "{sample}.{library}.mags.bmk"
+        BOWTIE2_MAGS / "{sample}.{library}.mags.log",
     params:
-        index_prefix=REFERENCE / "mags",
         extra=params["bowtie2"]["extra"],
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],
         rg_id=compose_rg_id,
@@ -274,7 +267,7 @@ rule bowtie2_map_mags_one:
 
 rule bowtie2_map_mags_all:
     input:
-        [BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB],
+        [BOWTIE2_MAGS / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
 
 
 rule bowtie2_report_all:
@@ -285,10 +278,10 @@ rule bowtie2_report_all:
     """
     input:
         [
-            BOWTIE2 / f"{sample}.{library}.{genome}.{report}"
+            f"{folder}/{sample}.{library}.{report}"
             for sample, library in SAMPLE_LIB
             for report in BAM_REPORTS
-            for genome in GENOMES
+            for folder in [BOWTIE2_HUMAN, BOWTIE2_CHICKEN, BOWTIE2_MAGS]
         ],
 
 

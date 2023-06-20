@@ -2,6 +2,13 @@ READS = Path("results/reads/")
 REFERENCE = Path("results/reference/")
 FASTP = Path("results/fastp/")
 BOWTIE2 = Path("results/bowtie2/")
+BOWTIE2_INDEX = BOWTIE2 / "index"
+BOWTIE2_HUMAN = BOWTIE2 / "human"
+BOWTIE2_NONHUMAN = BOWTIE2 / "nonhuman"
+BOWTIE2_CHICKEN = BOWTIE2 / "chicken"
+BOWTIE2_NONCHICKEN = BOWTIE2 / "nonchicken"
+BOWTIE2_MAGS = BOWTIE2 / "mags"
+
 STATS = Path("results/stats/")
 
 REPORT_STEP = Path("reports/by_step/")

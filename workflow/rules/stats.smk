@@ -17,6 +17,8 @@ rule stats_nonpareil_one:
         "../envs/stats.yml"
     params:
         prefix=compose_prefix_for_nonpareil,
+    resources:
+        runtime=24 * 60,
     shell:
         """
         gzip -dc {input.forward_} > {output.forward_fq} 2> {log}
@@ -55,6 +57,8 @@ rule stats_singlem_one:
     conda:
         "../envs/stats.yml"
     threads: params["singlem"]["threads"]
+    resources:
+        runtime=24 * 60,
     shell:
         """
         singlem pipe \

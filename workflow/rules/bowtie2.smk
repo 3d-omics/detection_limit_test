@@ -207,7 +207,7 @@ rule bowtie2_extract_nonchicken_one:
         | samtools fastq \
             -1 {output.forward_} \
             -2 {output.reverse_} \
-            -0 /dev/null
+            -0 /dev/null \
             -c 9 \
             --threads {threads}) \
         2> {log} 1>&2

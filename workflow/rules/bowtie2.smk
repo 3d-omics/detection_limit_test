@@ -103,6 +103,8 @@ rule bowtie2_extract_nonhuman_one:
     conda:
         "../envs/bowtie2.yml"
     threads: 8
+    resources:
+        runtime=6 * 60,
     shell:
         """
         (samtools merge \

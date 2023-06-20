@@ -117,8 +117,8 @@ rule bowtie2_extract_nonhuman_one:
             -2 {output.reverse_} \
             -0 /dev/null \
             -c 9 \
-            --threads {threads}) \
-        2> {log} 1>&2
+            --threads {threads} \
+        ) 2> {log} 1>&2
         """
 
 

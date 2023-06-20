@@ -17,7 +17,6 @@ rule samtools_stats_cram:
     input:
         cram="{prefix}/{sample}.{library}.cram",
         crai="{prefix}/{sample}.{library}.cram.crai",
-        # reference=REFERENCE / "fa.gz",
     output:
         tsv="{prefix}/{sample}.{library}.stats.tsv",
     log:

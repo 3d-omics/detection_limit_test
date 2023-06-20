@@ -12,7 +12,7 @@ rule stats_nonpareil_one:
         npl=STATS / "{sample}.{library}.npl",
         npo=STATS / "{sample}.{library}.npo",
     log:
-        STATS / "{sample}.{library}_nonchicken_1.log",
+        STATS / "{sample}.{library}.nonpareil.log",
     conda:
         "../envs/stats.yml"
     params:
@@ -76,6 +76,10 @@ rule stats_coverm_overall:
         crams=[
             BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB
         ],
+        crais=[
+            BOWTIE2 / f"{sample}.{library}.mags.cram.crai"
+            for sample, library in SAMPLE_LIB
+        ],
         mags=REFERENCE / "mags.fa.gz",
     output:
         STATS / "coverm_overall.tsv",
@@ -87,6 +91,8 @@ rule stats_coverm_overall:
         methods=params["coverm"]["genome"]["methods"],
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
     threads: 24
+    resources:
+        runtime=24 * 60,
     shell:
         """
         coverm genome \
@@ -104,6 +110,10 @@ rule stats_coverm_contig:
     input:
         crams=[
             BOWTIE2 / f"{sample}.{library}.mags.cram" for sample, library in SAMPLE_LIB
+        ],
+        crais=[
+            BOWTIE2 / f"{sample}.{library}.mags.cram.crai"
+            for sample, library in SAMPLE_LIB
         ],
         mags=REFERENCE / "mags.fa.gz",
     output:

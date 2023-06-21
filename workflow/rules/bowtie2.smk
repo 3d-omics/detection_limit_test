@@ -141,9 +141,9 @@ rule bowtie2_map_chicken_one:
     output:
         cram=protected(BOWTIE2_CHICKEN / "{sample}.{library}.cram"),
     log:
-        BOWTIE2_CHICKEN / "{sample}.{library}.chicken.log",
+        BOWTIE2_CHICKEN / "{sample}.{library}.log",
     benchmark:
-        BOWTIE2_CHICKEN / "{sample}.{library}.chicken.bmk"
+        BOWTIE2_CHICKEN / "{sample}.{library}.bmk"
     params:
         extra=params["bowtie2"]["extra"],
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],

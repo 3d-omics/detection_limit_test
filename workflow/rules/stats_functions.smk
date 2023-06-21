@@ -1,2 +1,2 @@
 def compose_prefix_for_nonpareil(wildcards):
-    return STATS / f"{wildcards.sample}.{wildcards.library}"
+    return STATS_NONPAREIL / f"{wildcards.sample}.{wildcards.library}"

@@ -6,13 +6,13 @@ rule stats_nonpareil_one:
     input:
         forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
     output:
-        forward_fq=temp(STATS / "{sample}.{library}_1.fq"),
-        npa=STATS / "{sample}.{library}.npa",
-        npc=STATS / "{sample}.{library}.npc",
-        npl=STATS / "{sample}.{library}.npl",
-        npo=STATS / "{sample}.{library}.npo",
+        forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_1.fq"),
+        npa=STATS_NONPAREIL / "{sample}.{library}.npa",
+        npc=STATS_NONPAREIL / "{sample}.{library}.npc",
+        npl=STATS_NONPAREIL / "{sample}.{library}.npl",
+        npo=STATS_NONPAREIL / "{sample}.{library}.npo",
     log:
-        STATS / "{sample}.{library}.nonpareil.log",
+        STATS_NONPAREIL / "{sample}.{library}.nonpareil.log",
     conda:
         "../envs/stats.yml"
     params:
@@ -36,7 +36,7 @@ rule stats_nonpareil_one:
 rule stats_nonpareil_all:
     input:
         [
-            STATS / f"{sample}.{library}.{extension}"
+            STATS_NONPAREIL / f"{sample}.{library}.{extension}"
             for extension in ["npa", "npc", "npl", "npo"]
             for sample, library in SAMPLE_LIB
         ],
@@ -51,9 +51,9 @@ rule stats_singlem_one:
         forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
         reverse_=BOWTIE2_NONCHICKEN / "{sample}.{library}_2.fq.gz",
     output:
-        otu_table=STATS / "{sample}.{library}.otu_table.tsv",
+        otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
     log:
-        STATS / "{sample}.{library}.singlem.log",
+        STATS_SINGLEM / "{sample}.{library}.singlem.log",
     conda:
         "../envs/stats.yml"
     threads: params["singlem"]["threads"]
@@ -72,7 +72,10 @@ rule stats_singlem_one:
 
 rule stats_singlem_all:
     input:
-        [STATS / f"{sample}.{library}.otu_table.tsv" for sample, library in SAMPLE_LIB],
+        [
+            STATS_SINGLEM / f"{sample}.{library}.otu_table.tsv"
+            for sample, library in SAMPLE_LIB
+        ],
 
 
 rule stats_coverm_overall:

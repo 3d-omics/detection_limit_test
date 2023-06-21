@@ -86,13 +86,8 @@ rule bowtie2_map_human_all:
 
 rule bowtie2_extract_nonhuman_one:
     """
-
-    I wish there were a saner way to do this:
-    - extract mapped and unmapped
-    - extract unmapped and mapped
-    - extract unmapped and unmapped
-    - sort by name
-    - produce fastq
+    Keep only pairs unmapped to the human reference genome, sort by name rather
+    than by coordinate, and convert to FASTQ.
     """
     input:
         cram=BOWTIE2_HUMAN / "{sample}.{library}.cram",
@@ -109,13 +104,12 @@ rule bowtie2_extract_nonhuman_one:
         runtime=6 * 60,
     shell:
         """
-        (samtools merge \
+        (samtools view \
             --threads {threads} \
             -u \
             -o /dev/stdout \
-            <(samtools view -u -f 4  -F 264 {input.cram}) \
-            <(samtools view -u -f 8  -F 260 {input.cram}) \
-            <(samtools view -u -f 12 -F 256 {input.cram}) \
+            -f 12 \
+            {input.cram} \
         | samtools sort \
             -n \
             -u \
@@ -193,6 +187,10 @@ rule bowtie2_map_chicken_all:
 
 
 rule bowtie2_extract_nonchicken_one:
+    """
+    Keep only pairs unmapped to the human reference genome, sort by name rather
+    than by coordinate, and convert to FASTQ.
+    """
     input:
         cram=BOWTIE2_CHICKEN / "{sample}.{library}.cram",
         reference=REFERENCE / "chicken.fa.gz",
@@ -206,13 +204,12 @@ rule bowtie2_extract_nonchicken_one:
     threads: 8
     shell:
         """
-        (samtools merge \
+        (samtools view \
             --threads {threads} \
             -u \
             -o /dev/stdout \
-            <(samtools view -u -f 4  -F 264 {input.cram}) \
-            <(samtools view -u -f 8  -F 260 {input.cram}) \
-            <(samtools view -u -f 12 -F 256 {input.cram}) \
+            -f 12 \
+            {input.cram} \
         | samtools sort \
             -n \
             -u \

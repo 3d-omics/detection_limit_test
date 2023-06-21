@@ -232,7 +232,7 @@ rule bowtie2_map_mags_one:
     output:
         cram=BOWTIE2_MAGS / "{sample}.{library}.cram",
     log:
-        BOWTIE2_MAGS / "{sample}.{library}.mags.log",
+        BOWTIE2_MAGS / "{sample}.{library}.log",
     params:
         extra=params["bowtie2"]["extra"],
         samtools_mem=params["bowtie2"]["samtools"]["mem_per_thread"],

@@ -106,6 +106,7 @@ rule bowtie2_extract_nonhuman_one:
     shell:
         """
         (samtools view \
+            --reference {input.reference} \
             --threads {threads} \
             -u \
             -o /dev/stdout \
@@ -209,6 +210,7 @@ rule bowtie2_extract_nonchicken_one:
     shell:
         """
         (samtools view \
+            --reference {input.reference} \
             --threads {threads} \
             -u \
             -o /dev/stdout \

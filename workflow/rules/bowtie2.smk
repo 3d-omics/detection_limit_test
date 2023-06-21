@@ -42,7 +42,7 @@ rule bowtie2_map_human_one:
         mock=BOWTIE2_INDEX / "human",
         reference=REFERENCE / "human.fa.gz",
     output:
-        cram=protected(BOWTIE2_HUMAN / "{sample}.{library}.cram"),
+        cram=BOWTIE2_HUMAN / "{sample}.{library}.cram",
     log:
         BOWTIE2_HUMAN / "{sample}.{library}.log",
     benchmark:
@@ -87,7 +87,12 @@ rule bowtie2_map_human_all:
 rule bowtie2_extract_nonhuman_one:
     """
 
-    I wish there were a way to do this without having to merge the BAM files
+    I wish there were a saner way to do this:
+    - extract mapped and unmapped
+    - extract unmapped and mapped
+    - extract unmapped and unmapped
+    - sort by name
+    - produce fastq
     """
     input:
         cram=BOWTIE2_HUMAN / "{sample}.{library}.cram",
@@ -105,10 +110,16 @@ rule bowtie2_extract_nonhuman_one:
     shell:
         """
         (samtools merge \
+            --threads {threads} \
+            -u \
             -o /dev/stdout \
             <(samtools view -u -f 4  -F 264 {input.cram}) \
             <(samtools view -u -f 8  -F 260 {input.cram}) \
             <(samtools view -u -f 12 -F 256 {input.cram}) \
+        | samtools sort \
+            -n \
+            -u \
+            --threads {threads} \
         | samtools fastq \
             -1 {output.forward_} \
             -2 {output.reverse_} \
@@ -139,7 +150,7 @@ rule bowtie2_map_chicken_one:
         mock=BOWTIE2_INDEX / "chicken",
         reference=REFERENCE / "chicken.fa.gz",
     output:
-        cram=protected(BOWTIE2_CHICKEN / "{sample}.{library}.cram"),
+        cram=BOWTIE2_CHICKEN / "{sample}.{library}.cram",
     log:
         BOWTIE2_CHICKEN / "{sample}.{library}.log",
     benchmark:
@@ -196,17 +207,23 @@ rule bowtie2_extract_nonchicken_one:
     shell:
         """
         (samtools merge \
+            --threads {threads} \
+            -u \
             -o /dev/stdout \
             <(samtools view -u -f 4  -F 264 {input.cram}) \
             <(samtools view -u -f 8  -F 260 {input.cram}) \
             <(samtools view -u -f 12 -F 256 {input.cram}) \
+        | samtools sort \
+            -n \
+            -u \
+            --threads {threads} \
         | samtools fastq \
             -1 {output.forward_} \
             -2 {output.reverse_} \
             -0 /dev/null \
             -c 9 \
-            --threads {threads}) \
-        2> {log} 1>&2
+            --threads {threads} \
+        ) 2> {log} 1>&2
         """
 
 

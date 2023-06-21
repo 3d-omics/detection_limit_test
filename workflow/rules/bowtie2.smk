@@ -102,6 +102,7 @@ rule bowtie2_extract_nonhuman_one:
     threads: 8
     resources:
         runtime=6 * 60,
+        memory=16 * 1024,
     shell:
         """
         (samtools view \
@@ -202,6 +203,9 @@ rule bowtie2_extract_nonchicken_one:
     conda:
         "../envs/bowtie2.yml"
     threads: 8
+    resources:
+        runtime=6 * 60,
+        memory=16 * 1024,
     shell:
         """
         (samtools view \

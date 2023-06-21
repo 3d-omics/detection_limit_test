@@ -12,7 +12,7 @@ rule stats_nonpareil_one:
         npl=STATS_NONPAREIL / "{sample}.{library}.npl",
         npo=STATS_NONPAREIL / "{sample}.{library}.npo",
     log:
-        STATS_NONPAREIL / "{sample}.{library}.nonpareil.log",
+        STATS_NONPAREIL / "{sample}.{library}.log",
     conda:
         "../envs/stats.yml"
     params:
@@ -53,7 +53,7 @@ rule stats_singlem_one:
     output:
         otu_table=STATS_SINGLEM / "{sample}.{library}.otu_table.tsv",
     log:
-        STATS_SINGLEM / "{sample}.{library}.singlem.log",
+        STATS_SINGLEM / "{sample}.{library}.log",
     conda:
         "../envs/stats.yml"
     threads: params["singlem"]["threads"]

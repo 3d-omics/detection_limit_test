@@ -57,7 +57,7 @@ rule bowtie2_map_human_one:
         "../envs/bowtie2.yml"
     resources:
         mem_mb=64 * 1024,
-        runtime=1440,
+        runtime=24 * 60,
     shell:
         """
         (bowtie2 \
@@ -153,8 +153,8 @@ rule bowtie2_map_chicken_one:
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_mb=32 * 1024,
-        runtime=1440,
+        mem_mb=64 * 1024,
+        runtime=24 * 60,
     shell:
         """
         (bowtie2 \
@@ -243,7 +243,7 @@ rule bowtie2_map_mags_one:
         "../envs/bowtie2.yml"
     resources:
         mem_mb=64 * 1024,
-        runtime=1440,
+        runtime=24 * 60,
     shell:
         """
         (bowtie2 \

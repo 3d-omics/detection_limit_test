@@ -12,6 +12,7 @@ BOWTIE2_MAGS = BOWTIE2 / "mags"
 STATS = Path("results/stats/")
 STATS_NONPAREIL = STATS / "nonpareil"
 STATS_SINGLEM = STATS / "singlem"
+STATS_COVERM = STATS / "coverm"
 
 REPORT_STEP = Path("reports/by_step/")
 REPORT_LIBRARY = Path("reports/by_library/")

@@ -59,6 +59,7 @@ rule stats_singlem_one:
     threads: params["singlem"]["threads"]
     resources:
         runtime=24 * 60,
+        mem_mb=32 * 1024,
     shell:
         """
         singlem pipe \
@@ -78,16 +79,38 @@ rule stats_singlem_all:
         ],
 
 
+rule stats_cram_to_mapped_bam:
+    input:
+        cram=BOWTIE2_MAGS / "{sample}.{library}.cram",
+        reference=REFERENCE / "mags.fa.gz",
+    output:
+        bam=temp(STATS_COVERM / "{sample}.{library}.bam"),
+    log:
+        STATS_COVERM / "{sample}.{library}.log",
+    conda:
+        "../envs/samtools.yml"
+    threads: 8
+    resources:
+        runtime=24 * 60,
+        mem_mb=8 * 1024,
+    shell:
+        """
+        samtools view \
+            -F 4 \
+            --threads {threads} \
+            --reference {input.reference} \
+            --output {output.bam} \
+            --fast \
+            {input.cram} \
+        2> {log}
+        """
+
+
 rule stats_coverm_overall:
     input:
         crams=[
-            BOWTIE2_MAGS / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB
+            STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
         ],
-        crais=[
-            BOWTIE2_MAGS / f"{sample}.{library}.cram.crai"
-            for sample, library in SAMPLE_LIB
-        ],
-        mags=REFERENCE / "mags.fa.gz",
     output:
         STATS / "coverm_overall.tsv",
     log:
@@ -100,12 +123,13 @@ rule stats_coverm_overall:
     threads: 24
     resources:
         runtime=24 * 60,
+        mem_mb=32 * 1024,
     shell:
         """
         coverm genome \
             --bam-files {input.crams} \
             --methods {params.methods} \
-            --separator _ \
+            --separator ^ \
             --threads {threads} \
             --min-covered-fraction {params.min_covered_fraction} \
         > {output} \
@@ -116,13 +140,8 @@ rule stats_coverm_overall:
 rule stats_coverm_contig:
     input:
         crams=[
-            BOWTIE2_MAGS / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB
+            STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
         ],
-        crais=[
-            BOWTIE2_MAGS / f"{sample}.{library}.cram.crai"
-            for sample, library in SAMPLE_LIB
-        ],
-        mags=REFERENCE / "mags.fa.gz",
     output:
         STATS / "coverm_contig.tsv",
     log:

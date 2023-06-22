@@ -108,7 +108,7 @@ rule stats_cram_to_mapped_bam:
 
 rule stats_coverm_overall:
     input:
-        crams=[
+        bams=[
             STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
         ],
     output:
@@ -120,6 +120,7 @@ rule stats_coverm_overall:
     params:
         methods=params["coverm"]["genome"]["methods"],
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
+        separator=params["coverm"]["genome"]["separator"],
     threads: 24
     resources:
         runtime=24 * 60,
@@ -127,7 +128,7 @@ rule stats_coverm_overall:
     shell:
         """
         coverm genome \
-            --bam-files {input.crams} \
+            --bam-files {input.bams} \
             --methods {params.methods} \
             --separator ^ \
             --threads {threads} \
@@ -139,7 +140,7 @@ rule stats_coverm_overall:
 
 rule stats_coverm_contig:
     input:
-        crams=[
+        bams=[
             STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
         ],
     output:
@@ -151,10 +152,14 @@ rule stats_coverm_contig:
     params:
         methods=params["coverm"]["contig"]["methods"],
     threads: 24
+    resources:
+        runtime=24 * 60,
+        mem_mb=32 * 1024,
     shell:
         """
         coverm contig \
-            --bam-files {input.crams} \
+            --threads {threads} \
+            --bam-files {input.bams} \
             --methods {params.methods} \
             --proper-pairs-only \
         > {output} \

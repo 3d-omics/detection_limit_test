@@ -13,6 +13,7 @@ coverm:
   genome:
     methods: "relative_abundance"
     min_covered_fraction: 0.0
+    separator: "^"
   contig:
     methods: "count"
 

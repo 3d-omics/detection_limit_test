@@ -72,15 +72,111 @@ rule report_step_bowtie2:
         """
 
 
+rule report_step_bowtie2_human:
+    """Collect all reports for the bowtie2 step"""
+    input:
+        reports=[
+            BOWTIE2_HUMAN / f"{sample}.{library}.{report}"
+            for sample, library in SAMPLE_LIB
+            for report in BAM_REPORTS
+        ],
+    output:
+        html=REPORT_STEP / "bowtie2_human.html",
+    log:
+        REPORT_STEP / "bowtie2_human.log",
+    conda:
+        "../envs/report.yml"
+    params:
+        dir=REPORT_STEP,
+    shell:
+        """
+        multiqc \
+            --title bowtie2_human \
+            --force \
+            --filename bowtie2_human \
+            --outdir {params.dir} \
+            --dirs \
+            --dirs-depth 1 \
+            {input.reports} \
+        2> {log} 1>&2
+        """
+
+
+rule report_step_bowtie2_chicken:
+    """Collect all reports for the bowtie2 step"""
+    input:
+        reports=[
+            BOWTIE2_CHICKEN / f"{sample}.{library}.{report}"
+            for sample, library in SAMPLE_LIB
+            for report in BAM_REPORTS
+        ],
+    output:
+        html=REPORT_STEP / "bowtie2_chicken.html",
+    log:
+        REPORT_STEP / "bowtie2_chicken.log",
+    conda:
+        "../envs/report.yml"
+    params:
+        dir=REPORT_STEP,
+    shell:
+        """
+        multiqc \
+            --title bowtie2_chicken \
+            --force \
+            --filename bowtie2_chicken \
+            --outdir {params.dir} \
+            --dirs \
+            --dirs-depth 1 \
+            {input.reports} \
+        2> {log} 1>&2
+        """
+
+
+rule report_step_bowtie2_mags:
+    """Collect all reports for the bowtie2 step"""
+    input:
+        reports=[
+            BOWTIE2_MAGS / f"{sample}.{library}.{report}"
+            for sample, library in SAMPLE_LIB
+            for report in BAM_REPORTS
+        ],
+    output:
+        html=REPORT_STEP / "bowtie2_mags.html",
+    log:
+        REPORT_STEP / "bowtie2_mags.log",
+    conda:
+        "../envs/report.yml"
+    params:
+        dir=REPORT_STEP,
+    shell:
+        """
+        multiqc \
+            --title bowtie2_mags \
+            --force \
+            --filename bowtie2_mags \
+            --outdir {params.dir} \
+            --dirs \
+            --dirs-depth 1 \
+            {input.reports} \
+        2> {log} 1>&2
+        """
+
+
 rule report_step:
     """Collect all per step reports for the pipeline"""
     input:
         rules.report_step_reads.output,
         rules.report_step_fastp.output,
         rules.report_step_bowtie2.output,
+        rules.report_step_bowtie2_human.output,
+        rules.report_step_bowtie2_chicken.output,
+        rules.report_step_bowtie2_mags.output,
 
 
 localrules:
     report_step_reads,
     report_step_fastp,
     report_step_bowtie2,
+    report_step_bowtie2_human,
+    report_step_bowtie2_chicken,
+    report_step_bowtie2_mags,

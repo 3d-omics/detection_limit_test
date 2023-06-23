@@ -220,3 +220,8 @@ rule stats:
         rules.stats_nonpareil.output,
         rules.stats_singlem.output,
         rules.stats_coverm.output,
+
+
+localrules:
+    stats_nonpareil,
+    stats_singlem,

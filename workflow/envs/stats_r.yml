@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-nonpareil
+  - r-argparse
+  - r-tidyverse=2.0.0

@@ -3,3 +3,4 @@ logs/**
 .snakemake
 .snakemake/**
 reports/**
+.Rproj.user

@@ -42,6 +42,26 @@ rule stats_nonpareil_all:
         ],
 
 
+rule stats_nonpareil:
+    input:
+        rules.stats_nonpareil_all.input,
+    output:
+        STATS / "nonpareil.tsv",
+    log:
+        STATS / "nonpareil.log",
+    conda:
+        "../envs/stats_r.yml"
+    params:
+        input_dir=STATS_NONPAREIL,
+    shell:
+        """
+        Rscript --no-init-file workflow/scripts/aggregate_nonpareil.R \
+            --input-folder {params.input_dir} \
+            --output-file {output} \
+        2> {log} 1>&2
+        """
+
+
 rule stats_singlem_one:
     """
     Note: SingleM asks in the documentation for the raw reads. Here we are
@@ -72,11 +92,33 @@ rule stats_singlem_one:
 
 
 rule stats_singlem_all:
+    """Run stats_singlem_one for all the samples"""
     input:
         [
             STATS_SINGLEM / f"{sample}.{library}.otu_table.tsv"
             for sample, library in SAMPLE_LIB
         ],
+
+
+rule stats_singlem:
+    """Aggregate all the singlem results into a single table"""
+    input:
+        rules.stats_singlem_all.input,
+    output:
+        STATS / "singlem.tsv",
+    log:
+        STATS / "singlem.log",
+    conda:
+        "../envs/stats_r.yml"
+    params:
+        input_dir=STATS_SINGLEM,
+    shell:
+        """
+        Rscript --no-init-file workflow/scripts/aggregate_singlem.R \
+            --input-folder {params.input_dir} \
+            --output-file {output} \
+        2> {log}
+        """
 
 
 rule stats_cram_to_mapped_bam:
@@ -167,7 +209,7 @@ rule stats_coverm_contig:
         """
 
 
-rule stats_coverm_all:
+rule stats_coverm:
     input:
         rules.stats_coverm_overall.output,
         rules.stats_coverm_contig.output,
@@ -175,6 +217,6 @@ rule stats_coverm_all:
 
 rule stats:
     input:
-        rules.stats_nonpareil_all.input,
-        rules.stats_singlem_all.input,
-        rules.stats_coverm_all.input,
+        rules.stats_nonpareil.output,
+        rules.stats_singlem.output,
+        rules.stats_coverm.output,

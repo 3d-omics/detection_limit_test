@@ -41,13 +41,46 @@ snakemake \
 ```
 
 ## Brief description
+
 1. Trim reads and remove adaptors with `fastp`
 2. Map to human, chicken / pig, mag catalogue:
-   1. Map to the reference
-   2. Extract the reads that have one of both ends unmapped
+   1. Map to the reference with `bowtie2`
+   2. Extract the reads that have one of both ends unmapped with `samtools`
    3. Map those unmapped reads to the next reference
 3. Generate MAG statistics with
-   1. CoverM
-   2. SingleM
-   3. Nonpareil
+   1. `coverm`
+   2. `singlem`
+   3. `nonpareil`
 4. Generate lots of reports in the `reports/` folder
+
+## Rulegraph
+
+![rulegraph](rulegraph.svg)
+
+
+## Possible problems
+
+- `singlem` and/or `nonpareil` didnot finish some output because of low coverage.
+  Paste this:
+
+   ```
+   Rscript workflow/scripts/aggregate_nonpareil.R \
+      --input-folder results/stats/nonpareil \
+      --output-file results/stats/nonpareil.tsv
+
+   Rscript workflow/scripts/aggregate_singlem.R \
+      --input-folder results/stats/singlem \
+      --output-file results/stats/singlem.tsv
+   ```
+
+
+## References
+
+- [fastp](https://github.com/OpenGene/fastp)
+- [bowtie2](https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml)
+- [samtools](https://www.htslib.org/)
+- [coverm](https://github.com/wwood/CoverM)
+- [singlem](https://github.com/wwood/singlem)
+- [nonpareil](http://enve-omics.ce.gatech.edu/nonpareil/)
+- [fastqc](https://github.com/s-andrews/FastQC)
+- [multiqc](https://multiqc.info/)

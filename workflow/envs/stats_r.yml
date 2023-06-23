@@ -3,6 +3,6 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - r-nonpareil
-  - r-argparse
+  - r-nonpareil=3.4.0
+  - r-argparse=2.2.2
   - r-tidyverse=2.0.0

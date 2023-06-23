@@ -1,4 +1,5 @@
 def get_bowtie2_for_library_reports(wildcards):
+    """Compose the paths for the bowtie2 reports"""
     sample = wildcards.sample
     library = wildcards.library
     return [

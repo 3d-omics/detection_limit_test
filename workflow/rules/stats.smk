@@ -1,5 +1,6 @@
 rule stats_nonpareil_one:
-    """
+    """Run nonpareil over one sample
+
     Note: Nonpareil only ask for one of the pair-end reads
     Note2: it has to be fastq. The process substitution trick does not work
     """
@@ -34,6 +35,7 @@ rule stats_nonpareil_one:
 
 
 rule stats_nonpareil_all:
+    """Run stats_nonpareil_one for all the samples"""
     input:
         [
             STATS_NONPAREIL / f"{sample}.{library}.{extension}"
@@ -43,6 +45,7 @@ rule stats_nonpareil_all:
 
 
 rule stats_nonpareil:
+    """Aggregate all the nonpareil results into a single table"""
     input:
         rules.stats_nonpareil_all.input,
     output:
@@ -63,7 +66,8 @@ rule stats_nonpareil:
 
 
 rule stats_singlem_one:
-    """
+    """Run singlem over one sample
+
     Note: SingleM asks in the documentation for the raw reads. Here we are
     passing it the non-host and trimmed ones.
     """
@@ -122,6 +126,12 @@ rule stats_singlem:
 
 
 rule stats_cram_to_mapped_bam:
+    """Convert cram to bam
+
+    Note: this step is needed because coverm probably does not support cram. The
+    log from coverm shows failures to get the reference online, but nonetheless
+    it works.
+    """
     input:
         cram=BOWTIE2_MAGS / "{sample}.{library}.cram",
         reference=REFERENCE / "mags.fa.gz",
@@ -149,6 +159,7 @@ rule stats_cram_to_mapped_bam:
 
 
 rule stats_coverm_overall:
+    """Get the overall coverage of the MAGSs"""
     input:
         bams=[
             STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
@@ -181,6 +192,7 @@ rule stats_coverm_overall:
 
 
 rule stats_coverm_contig:
+    """Get the coverage of the MAG contigs"""
     input:
         bams=[
             STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
@@ -210,12 +222,14 @@ rule stats_coverm_contig:
 
 
 rule stats_coverm:
+    """Run both coverm overall and contig"""
     input:
         rules.stats_coverm_overall.output,
         rules.stats_coverm_contig.output,
 
 
 rule stats:
+    """Run all the stats rules: nonpareil, singlem, and coverm"""
     input:
         rules.stats_nonpareil.output,
         rules.stats_singlem.output,

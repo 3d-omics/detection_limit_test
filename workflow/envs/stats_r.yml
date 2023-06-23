@@ -1,3 +1,5 @@
+# Tools to get statistics on the metagenomes in R
+---
 channels:
   - conda-forge
   - bioconda

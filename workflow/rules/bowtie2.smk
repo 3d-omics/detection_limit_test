@@ -80,6 +80,7 @@ rule bowtie2_map_human_one:
 
 
 rule bowtie2_map_human_all:
+    """Run bowtie2_map_human_one for all libraries"""
     input:
         [BOWTIE2_HUMAN / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
 
@@ -127,6 +128,7 @@ rule bowtie2_extract_nonhuman_one:
 
 
 rule bowtie2_extract_nonhuman_all:
+    """Run bowtie2_extract_nonhuman_one for all libraries"""
     input:
         [
             BOWTIE2_NONHUMAN / f"{sample}.{library}_{end}.fq.gz"
@@ -184,6 +186,7 @@ rule bowtie2_map_chicken_one:
 
 
 rule bowtie2_map_chicken_all:
+    """Run bowtie2_map_chicken_one for all libraries"""
     input:
         [BOWTIE2_CHICKEN / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
 
@@ -231,6 +234,7 @@ rule bowtie2_extract_nonchicken_one:
 
 
 rule bowtie2_extract_nonchicken_all:
+    """Run bowtie2_extract_nonchicken_one for all libraries"""
     input:
         [
             BOWTIE2_NONCHICKEN / f"{sample}.{library}_{end}.fq.gz"
@@ -286,6 +290,7 @@ rule bowtie2_map_mags_one:
 
 
 rule bowtie2_map_mags_all:
+    """Run bowtie2_map_mags_one for all libraries"""
     input:
         [BOWTIE2_MAGS / f"{sample}.{library}.cram" for sample, library in SAMPLE_LIB],
 

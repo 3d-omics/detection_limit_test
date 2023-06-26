@@ -16,6 +16,7 @@ rule fastp_trim_one:
         adapter_forward=get_forward_adapter,
         adapter_reverse=get_reverse_adapter,
         extra=params["fastp"]["extra"],
+        length_required=params["fastp"]["length_required"],
     threads: 24
     resources:
         mem_mb=4 * 1024,
@@ -37,6 +38,7 @@ rule fastp_trim_one:
             --verbose \
             --adapter_sequence {params.adapter_forward} \
             --adapter_sequence_r2 {params.adapter_reverse} \
+            --length_required {params.length_required} \
             --thread {threads} \
             {params.extra} \
         2> {log} 1>&2
@@ -51,23 +53,6 @@ rule fastp_trim_all:
             for sample, library in SAMPLE_LIB
             for end in "1 2 u1 u2".split(" ")
         ],
-
-
-rule fastp_index_one:
-    input:
-        FASTP / "{sample}.{library}_{end}.fq.gz",
-    output:
-        fai=FASTP / "{sample}.{library}_{end}.fq.gz.fai",
-        gzi=FASTP / "{sample}.{library}_{end}.fq.gz.gzi",
-    log:
-        FASTP / "{sample}.{library}_{end}.index.log",
-    conda:
-        "../envs/fastp.yml"
-    resources:
-        mem_mb=16 * 1024,
-        runtime=240,
-    shell:
-        "samtools fqidx {input} 2> {log} 1>&2"
 
 
 rule fastp_fastqc_all:

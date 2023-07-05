@@ -1,0 +1,8 @@
+# kraken2: minimal conda environment for kraken2
+---
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - kraken2=2.1.3

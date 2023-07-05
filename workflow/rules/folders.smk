@@ -1,6 +1,8 @@
 READS = Path("results/reads/")
 REFERENCE = Path("results/reference/")
 FASTP = Path("results/fastp/")
+KRAKEN2 = Path("results/kraken2/")
+
 BOWTIE2 = Path("results/bowtie2/")
 BOWTIE2_INDEX = BOWTIE2 / "index"
 BOWTIE2_HUMAN = BOWTIE2 / "human"

@@ -11,6 +11,9 @@ rule kraken2_assign_one:
     conda:
         "../envs/kraken2.yml"
     threads: 24
+    resources:
+        mem_mb=8 * 1024,
+        runtime=60,
     shell:
         """
         kraken2 \

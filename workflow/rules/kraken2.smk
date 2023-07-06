@@ -4,7 +4,7 @@ rule kraken2_assign_one:
         reverse_=FASTP / "{sample}.{library}_2.fq.gz",
         database=features["kraken2_db"],
     output:
-        out=KRAKEN2 / "{sample}.{library}.out",
+        out_gz=KRAKEN2 / "{sample}.{library}.out.gz",
         report=KRAKEN2 / "{sample}.{library}.report",
     log:
         log=KRAKEN2 / "{sample}.{library}.log",
@@ -21,7 +21,7 @@ rule kraken2_assign_one:
             --threads {threads} \
             --paired \
             --gzip-compressed \
-            --output {output.out} \
+            --output >(pigz -11 > {output.out_gz}} \
             --report {output.report} \
             {input.forward_} \
             {input.reverse_} \

@@ -11,7 +11,7 @@ bowtie2:
 
 coverm:
   genome:
-    methods: "relative_abundance"
+    methods: "count"
     min_covered_fraction: 0.0
     separator: "^"
   contig:

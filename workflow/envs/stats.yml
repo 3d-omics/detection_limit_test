@@ -10,3 +10,4 @@ dependencies:
   - singlem=0.13.2
   - bird_tool_utils_python=0.4.1
   - coverm=0.6.1
+  - libtiff=4.5  # required by singlem

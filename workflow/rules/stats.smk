@@ -158,16 +158,16 @@ rule stats_cram_to_mapped_bam:
         """
 
 
-rule stats_coverm_overall:
+rule stats_coverm_genome:
     """Get the overall coverage of the MAGSs"""
     input:
         bams=[
             STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
         ],
     output:
-        STATS / "coverm_overall.tsv",
+        STATS / "coverm_genome.tsv",
     log:
-        STATS / "coverm_overall.log",
+        STATS / "coverm_genome.log",
     conda:
         "../envs/stats.yml"
     params:
@@ -224,7 +224,7 @@ rule stats_coverm_contig:
 rule stats_coverm:
     """Run both coverm overall and contig"""
     input:
-        rules.stats_coverm_overall.output,
+        rules.stats_coverm_genome.output,
         rules.stats_coverm_contig.output,
 
 
@@ -233,7 +233,7 @@ rule stats:
     input:
         rules.stats_nonpareil.output,
         rules.stats_singlem.output,
-        rules.stats_coverm.output,
+        rules.stats_coverm.input,
 
 
 localrules:

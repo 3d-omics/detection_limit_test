@@ -30,7 +30,7 @@ jobs:
         with:
           lfs: 'true'
 
-      - name: Install libtiff
+      - name: Install libtiff5-dev
         run: sudo apt-get install -y libtiff5-dev
 
       - name: Cache

@@ -83,7 +83,7 @@ rule stats_singlem_one:
     threads: params["singlem"]["threads"]
     resources:
         runtime=24 * 60,
-        mem_gb=32,
+        mem_mb=32 * 1024,
     shell:
         """
         singlem pipe \
@@ -144,7 +144,7 @@ rule stats_cram_to_mapped_bam:
     threads: 8
     resources:
         runtime=24 * 60,
-        mem_gb=8,
+        mem_mb=8 * 1024,
     shell:
         """
         samtools view \
@@ -177,7 +177,7 @@ rule stats_coverm_overall:
     threads: 24
     resources:
         runtime=24 * 60,
-        mem_gb=32,
+        mem_mb=32 * 1024,
     shell:
         """
         coverm genome \
@@ -208,7 +208,7 @@ rule stats_coverm_contig:
     threads: 24
     resources:
         runtime=24 * 60,
-        mem_gb=32,
+        mem_mb=32 * 1024,
     shell:
         """
         coverm contig \

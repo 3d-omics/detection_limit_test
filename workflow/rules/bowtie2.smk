@@ -18,7 +18,7 @@ rule bowtie2_build:
         extra=params["bowtie2"]["extra"],
     threads: 8
     resources:
-        mem_gb=32,
+        mem_mb=32 * 1024,
         runtime=24 * 60,
     shell:
         """
@@ -56,7 +56,7 @@ rule bowtie2_map_human_one:
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_gb=64,
+        mem_mb=64 * 1024,
         runtime=24 * 60,
     shell:
         """
@@ -103,7 +103,7 @@ rule bowtie2_extract_nonhuman_one:
     threads: 8
     resources:
         runtime=6 * 60,
-        mem_gb=16,
+        mem_mb=16 * 1024,
     shell:
         """
         (samtools view \
@@ -162,7 +162,7 @@ rule bowtie2_map_chicken_one:
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_gb=64,
+        mem_mb=64 * 1024,
         runtime=24 * 60,
     shell:
         """
@@ -209,7 +209,7 @@ rule bowtie2_extract_nonchicken_one:
     threads: 8
     resources:
         runtime=6 * 60,
-        mem_gb=16,
+        mem_mb=16 * 1024,
     shell:
         """
         (samtools view \
@@ -266,7 +266,7 @@ rule bowtie2_map_mags_one:
     conda:
         "../envs/bowtie2.yml"
     resources:
-        mem_gb=64,
+        mem_mb=64 * 1024,
         runtime=24 * 60,
     shell:
         """

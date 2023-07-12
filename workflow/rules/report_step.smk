@@ -46,27 +46,33 @@ rule report_step_fastp:
         """
 
 
-rule report_step_kraken2:
+rule report_step_kraken2_one:
     input:
         rules.kraken2_report_all.input,
     output:
-        html=REPORT_STEP / "kraken2.html",
+        html=REPORT_STEP / "kraken2_{kraken2_db}.html",
     log:
-        REPORT_STEP / "kraken2.log",
+        REPORT_STEP / "kraken2_{kraken2_db}.log",
     conda:
         "../envs/report.yml"
     params:
         dir=REPORT_STEP,
+        title="kraken2_{kraken2_db}",
     shell:
         """
         multiqc \
-            --title kraken2 \
+            --title {params.title} \
             --force \
-            --filename kraken2 \
+            --filename {params.title} \
             --outdir {params.dir} \
             {input} \
         2> {log} 1>&2
         """
+
+
+rule report_step_kraken2_all:
+    input:
+        [REPORT_STEP / f"kraken2_{kraken2_db}.html" for kraken2_db in KRAKEN2_DBS],
 
 
 rule report_step_bowtie2:
@@ -190,7 +196,7 @@ rule report_step:
     input:
         rules.report_step_reads.output,
         rules.report_step_fastp.output,
-        rules.report_step_kraken2.output,
+        rules.report_step_kraken2_all.input,  # input!
         rules.report_step_bowtie2.output,
         rules.report_step_bowtie2_human.output,
         rules.report_step_bowtie2_chicken.output,
@@ -200,6 +206,8 @@ rule report_step:
 localrules:
     report_step_reads,
     report_step_fastp,
+    report_step_kraken2_one,
+    report_step_kraken2_all,
     report_step_bowtie2,
     report_step_bowtie2_human,
     report_step_bowtie2_chicken,

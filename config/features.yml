@@ -5,4 +5,6 @@ reference:
   chicken: resources/reference/chicken_39_sub.fa.gz
   mags: resources/reference/mags_sub.fa.gz
 
-kraken2_db: resources/kraken2_mock
+kraken2_dbs:
+  mock_db1: resources/kraken2_mock
+  mock_db2: resources/kraken2_mock

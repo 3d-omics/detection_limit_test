@@ -42,7 +42,7 @@ rule samtools_idxstats_cram:
         "samtools idxstats {input.cram} > {output.tsv} 2> {log}"
 
 
-rule samtools_stats_cram_human:
+rule samtools_stats_cram:
     """Compute stats for a cram"""
     input:
         cram=BOWTIE2 / "{genome}/{sample}.{library}.cram",

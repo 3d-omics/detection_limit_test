@@ -133,12 +133,12 @@ rule stats_cram_to_mapped_bam:
     it works.
     """
     input:
-        cram=BOWTIE2_MAGS / "{sample}.{library}.cram",
-        reference=REFERENCE / "mags.fa.gz",
+        cram=BOWTIE2_MAGS / "{mag_catalogue}/{sample}.{library}.cram",
+        reference=REFERENCE / "mags/{mag_catalogue}.fa.gz",
     output:
-        bam=temp(STATS_COVERM / "{sample}.{library}.bam"),
+        bam=temp(STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam"),
     log:
-        STATS_COVERM / "{sample}.{library}.log",
+        STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.log",
     conda:
         "../envs/samtools.yml"
     threads: 8
@@ -158,62 +158,75 @@ rule stats_cram_to_mapped_bam:
         """
 
 
-rule stats_coverm_genome:
-    """Get the overall coverage of the MAGSs"""
+rule stats_coverm_genome_one_library_one_mag_catalogue:
     input:
-        bams=[
-            STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
-        ],
+        bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
     output:
-        STATS / "coverm_genome.tsv",
-    log:
-        STATS / "coverm_genome.log",
+        tsv=STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.tsv",
     conda:
         "../envs/stats.yml"
+    log:
+        STATS_COVERM / "{mag_catalogue}/genome/{sample}.{library}.log",
     params:
         methods=params["coverm"]["genome"]["methods"],
         min_covered_fraction=params["coverm"]["genome"]["min_covered_fraction"],
         separator=params["coverm"]["genome"]["separator"],
-    threads: 24
-    resources:
-        runtime=24 * 60,
-        mem_mb=32 * 1024,
     shell:
         """
         coverm genome \
-            --bam-files {input.bams} \
+            --bam-files {input.bam} \
             --methods {params.methods} \
-            --separator ^ \
-            --threads {threads} \
+            --separator {params.separator} \
             --min-covered-fraction {params.min_covered_fraction} \
         > {output} \
         2> {log}
         """
 
 
-rule stats_coverm_contig:
-    """Get the coverage of the MAG contigs"""
+rule stats_coverm_genome_aggregate_one_mag_catalogue:
+    """Aggregate all the nonpareil results into a single table"""
     input:
-        bams=[
-            STATS_COVERM / f"{sample}.{library}.bam" for sample, library in SAMPLE_LIB
-        ],
+        get_coverm_genome_tsv_files_for_aggregation,
     output:
-        STATS / "coverm_contig.tsv",
+        STATS / "coverm_genome_{mag_catalogue}.tsv",
     log:
-        STATS / "coverm_contig.log",
+        STATS / "coverm_genome_{mag_catalogue}.log",
+    conda:
+        "../envs/stats_r.yml"
+    params:
+        input_dir=lambda wildcards: STATS_COVERM / wildcards.mag_catalogue / "genome",
+    shell:
+        """
+        Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
+            --input-folder {params.input_dir} \
+            --output-file {output} \
+        2> {log} 1>&2
+        """
+
+
+rule stats_coverm_genome:
+    input:
+        [
+            STATS / f"coverm_genome_{mag_catalogue}.tsv"
+            for mag_catalogue in MAG_CATALOGUES
+        ],
+
+
+rule stats_coverm_contig_one_library_one_mag_catalogue:
+    input:
+        bam=STATS_COVERM / "{mag_catalogue}/bams/{sample}.{library}.bam",
+    output:
+        tsv=STATS_COVERM / "{mag_catalogue}/contig/{sample}.{library}.tsv",
     conda:
         "../envs/stats.yml"
+    log:
+        STATS_COVERM / "{mag_catalogue}/contig/{sample}.{library}.log",
     params:
         methods=params["coverm"]["contig"]["methods"],
-    threads: 24
-    resources:
-        runtime=24 * 60,
-        mem_mb=32 * 1024,
     shell:
         """
         coverm contig \
-            --threads {threads} \
-            --bam-files {input.bams} \
+            --bam-files {input.bam} \
             --methods {params.methods} \
             --proper-pairs-only \
         > {output} \
@@ -221,11 +234,40 @@ rule stats_coverm_contig:
         """
 
 
+rule stats_coverm_contig_aggregate_mag_catalogue:
+    """Aggregate all the nonpareil results into a single table"""
+    input:
+        get_coverm_contig_tsv_files_for_aggregation,
+    output:
+        STATS / "coverm_contig_{mag_catalogue}.tsv",
+    log:
+        STATS / "coverm_contig_{mag_catalogue}.log",
+    conda:
+        "../envs/stats_r.yml"
+    params:
+        input_dir=lambda wildcards: STATS_COVERM / wildcards.mag_catalogue / "contig",
+    shell:
+        """
+        Rscript --no-init-file workflow/scripts/aggregate_coverm.R \
+            --input-folder {params.input_dir} \
+            --output-file {output} \
+        2> {log} 1>&2
+        """
+
+
+rule stats_coverm_contig:
+    input:
+        [
+            STATS / f"coverm_contig_{mag_catalogue}.tsv"
+            for mag_catalogue in MAG_CATALOGUES
+        ],
+
+
 rule stats_coverm:
     """Run both coverm overall and contig"""
     input:
-        rules.stats_coverm_genome.output,
-        rules.stats_coverm_contig.output,
+        rules.stats_coverm_genome.input,
+        rules.stats_coverm_contig.input,
 
 
 rule stats:

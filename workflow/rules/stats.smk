@@ -3,15 +3,17 @@ rule stats_nonpareil_one:
 
     Note: Nonpareil only ask for one of the pair-end reads
     Note2: it has to be fastq. The process substitution trick does not work
+    Note3: in case that nonpareil fails for low coverage samples, it creates
+    empty files
     """
     input:
         forward_=BOWTIE2_NONCHICKEN / "{sample}.{library}_1.fq.gz",
     output:
         forward_fq=temp(STATS_NONPAREIL / "{sample}.{library}_1.fq"),
-        npa=STATS_NONPAREIL / "{sample}.{library}.npa",
-        npc=STATS_NONPAREIL / "{sample}.{library}.npc",
-        npl=STATS_NONPAREIL / "{sample}.{library}.npl",
-        npo=STATS_NONPAREIL / "{sample}.{library}.npo",
+        npa=touch(STATS_NONPAREIL / "{sample}.{library}.npa"),
+        npc=touch(STATS_NONPAREIL / "{sample}.{library}.npc"),
+        npl=touch(STATS_NONPAREIL / "{sample}.{library}.npl"),
+        npo=touch(STATS_NONPAREIL / "{sample}.{library}.npo"),
     log:
         STATS_NONPAREIL / "{sample}.{library}.log",
     conda:
@@ -30,7 +32,7 @@ rule stats_nonpareil_one:
             -b {params.prefix} \
             -f fastq \
             -t {threads} \
-        2>> {log} 1>&2
+        2>> {log} 1>&2 || true
         """
 
 
